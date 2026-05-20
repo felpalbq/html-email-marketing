@@ -1,0 +1,368 @@
+import { nanoid } from '../utils/nanoid'
+import type {
+  BlockType, Block,
+  HeroProps, AnnouncementProps, SectionHeaderProps, CardGridProps,
+  TestimonialProps, LogoBarProps, FeatureListProps, CtaBannerProps,
+  ComparisonTableProps, PricingProps, FaqProps, SocialProofProps, FooterProps,
+} from './types'
+
+export const BLOCK_LABELS: Record<BlockType, string> = {
+  hero: 'Hero',
+  announcement: 'Barra de Anúncio',
+  sectionHeader: 'Cabeçalho de Seção',
+  cardGrid: 'Grade de Cards',
+  testimonial: 'Depoimento',
+  logoBar: 'Barra de Logos',
+  featureList: 'Lista de Diferenciais',
+  ctaBanner: 'Banner CTA',
+  comparisonTable: 'Tabela Comparativa',
+  pricing: 'Preços',
+  faq: 'FAQ',
+  socialProof: 'Prova Social',
+  footer: 'Rodapé',
+}
+
+export const BLOCK_ICONS: Record<BlockType, string> = {
+  hero: '🖼',
+  announcement: '📢',
+  sectionHeader: '📌',
+  cardGrid: '⊞',
+  testimonial: '💬',
+  logoBar: '🏷',
+  featureList: '✅',
+  ctaBanner: '🚀',
+  comparisonTable: '⚖',
+  pricing: '💰',
+  faq: '❓',
+  socialProof: '📸',
+  footer: '📋',
+}
+
+const DEFAULT_HERO: HeroProps = {
+  backgroundImage: '',
+  backgroundImageAlt: '',
+  overlayColor: '#000000',
+  overlayOpacity: 0,
+  badge: 'NOVO',
+  badgeColor: '#f97316',
+  headline: 'Seu Título Impactante Aqui',
+  headlineFontFamily: 'Montserrat',
+  headlineFontSize: 48,
+  headlineFontWeight: '800',
+  headlineColor: '#ffffff',
+  subtitle: 'Texto de apoio que explica sua oferta e por que ela importa para o seu público.',
+  subtitleFontFamily: 'Inter',
+  subtitleFontSize: 18,
+  subtitleColor: '#e5e7eb',
+  ctaText: 'Começar Agora',
+  ctaUrl: '#',
+  ctaBackgroundColor: '#f97316',
+  ctaTextColor: '#ffffff',
+  ctaBorderRadius: 6,
+  contentAlignment: 'center',
+  paddingTop: 80,
+  paddingBottom: 80,
+  minHeight: 420,
+}
+
+const DEFAULT_ANNOUNCEMENT: AnnouncementProps = {
+  text: '🔥 Oferta por Tempo Limitado — Use o cupom SAVE20 e ganhe 20% de desconto',
+  textColor: '#ffffff',
+  backgroundColor: '#dc2626',
+  fontFamily: 'Inter',
+  fontSize: 14,
+  fontWeight: '600',
+  paddingTop: 12,
+  paddingBottom: 12,
+  alignment: 'center',
+  showIcon: false,
+  iconEmoji: '⚡',
+}
+
+const DEFAULT_SECTION_HEADER: SectionHeaderProps = {
+  title: 'Por Que Nos Escolher',
+  titleFontFamily: 'Montserrat',
+  titleFontSize: 36,
+  titleFontWeight: '700',
+  titleColor: '#111827',
+  subtitle: 'A melhor solução para suas necessidades',
+  subtitleFontFamily: 'Over the Rainbow',
+  subtitleFontSize: 22,
+  subtitleColor: '#f97316',
+  alignment: 'center',
+  backgroundColor: '#ffffff',
+  paddingTop: 48,
+  paddingBottom: 24,
+}
+
+const DEFAULT_CARD_GRID: CardGridProps = {
+  columns: 3,
+  backgroundColor: '#f9fafb',
+  paddingTop: 40,
+  paddingBottom: 40,
+  columnGap: 16,
+  cards: [
+    {
+      id: nanoid(), image: '', imageAlt: 'Produto 1', badge: 'MAIS VENDIDO', badgeColor: '#f97316',
+      title: 'Nome do Produto', description: 'Breve descrição deste produto incrível.', ctaText: 'Comprar',
+      ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', cardBackgroundColor: '#ffffff', borderRadius: 8,
+    },
+    {
+      id: nanoid(), image: '', imageAlt: 'Produto 2', badge: 'NOVO', badgeColor: '#10b981',
+      title: 'Nome do Produto', description: 'Breve descrição deste produto incrível.', ctaText: 'Comprar',
+      ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', cardBackgroundColor: '#ffffff', borderRadius: 8,
+    },
+    {
+      id: nanoid(), image: '', imageAlt: 'Produto 3', badge: '', badgeColor: '#6366f1',
+      title: 'Nome do Produto', description: 'Breve descrição deste produto incrível.', ctaText: 'Comprar',
+      ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', cardBackgroundColor: '#ffffff', borderRadius: 8,
+    },
+  ],
+  titleFontFamily: 'Inter',
+  titleFontSize: 16,
+  titleColor: '#111827',
+  descriptionFontFamily: 'Inter',
+  descriptionFontSize: 14,
+  descriptionColor: '#6b7280',
+}
+
+const DEFAULT_TESTIMONIAL: TestimonialProps = {
+  layout: 'carousel-static',
+  backgroundColor: '#ffffff',
+  paddingTop: 48,
+  paddingBottom: 48,
+  testimonials: [
+    {
+      id: nanoid(), avatar: '', name: 'Ana Souza', role: 'CEO, Acme Brasil',
+      quote: '"Este produto transformou completamente a nossa forma de trabalhar. Recomendo muito!"',
+      ctaText: '', ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff',
+      cardBackgroundColor: '#f9fafb', borderRadius: 8, stars: 5,
+    },
+    {
+      id: nanoid(), avatar: '', name: 'Carlos Mendes', role: 'Designer',
+      quote: '"Qualidade e suporte incríveis. Vimos uma melhoria de 40% na produtividade da equipe."',
+      ctaText: '', ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff',
+      cardBackgroundColor: '#f9fafb', borderRadius: 8, stars: 5,
+    },
+    {
+      id: nanoid(), avatar: '', name: 'Beatriz Lima', role: 'Diretora de Marketing',
+      quote: '"O melhor investimento que nossa equipe já fez. Simples, poderoso e confiável."',
+      ctaText: '', ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff',
+      cardBackgroundColor: '#f9fafb', borderRadius: 8, stars: 5,
+    },
+  ],
+  nameFontFamily: 'Inter',
+  nameColor: '#111827',
+  quoteFontFamily: 'Inter',
+  quoteColor: '#374151',
+}
+
+const DEFAULT_LOGO_BAR: LogoBarProps = {
+  title: 'Como visto em',
+  backgroundColor: '#f9fafb',
+  logos: [
+    { id: nanoid(), image: '', alt: 'Forbes', url: '#', maxHeight: 32 },
+    { id: nanoid(), image: '', alt: 'TechCrunch', url: '#', maxHeight: 32 },
+    { id: nanoid(), image: '', alt: 'Wired', url: '#', maxHeight: 32 },
+    { id: nanoid(), image: '', alt: 'The Verge', url: '#', maxHeight: 32 },
+  ],
+  paddingTop: 32,
+  paddingBottom: 32,
+  gap: 40,
+  alignment: 'center',
+  opacity: 60,
+}
+
+const DEFAULT_FEATURE_LIST: FeatureListProps = {
+  columns: 2,
+  backgroundColor: '#ffffff',
+  paddingTop: 48,
+  paddingBottom: 48,
+  features: [
+    { id: nanoid(), icon: '⚡', title: 'Ultra Rápido', description: 'Obtenha resultados em segundos com nosso motor otimizado.' },
+    { id: nanoid(), icon: '🔒', title: 'Seguro por Padrão', description: 'Segurança de nível empresarial integrada desde o primeiro dia.' },
+    { id: nanoid(), icon: '📱', title: 'Mobile First', description: 'Funciona perfeitamente em todos os dispositivos e tamanhos de tela.' },
+    { id: nanoid(), icon: '🎯', title: 'Alta Precisão', description: '99,9% de taxa de acurácia respaldada por ciência de dados.' },
+  ],
+  titleFontFamily: 'Inter',
+  titleFontSize: 16,
+  titleColor: '#111827',
+  descriptionFontFamily: 'Inter',
+  descriptionFontSize: 14,
+  descriptionColor: '#6b7280',
+  iconSize: 32,
+}
+
+const DEFAULT_CTA_BANNER: CtaBannerProps = {
+  layout: 'image-right',
+  backgroundColor: '#1e1b4b',
+  image: '',
+  imageAlt: '',
+  badge: 'OFERTA LIMITADA',
+  badgeColor: '#f97316',
+  badgeTextColor: '#ffffff',
+  headline: 'Pronto Para Começar?',
+  headlineFontFamily: 'Montserrat',
+  headlineFontSize: 32,
+  headlineColor: '#ffffff',
+  bodyText: 'Junte-se a milhares de clientes satisfeitos e veja a diferença por você mesmo.',
+  bodyFontFamily: 'Inter',
+  bodyColor: '#c7d2fe',
+  ctaText: 'Começar Gratuitamente',
+  ctaUrl: '#',
+  ctaBackgroundColor: '#f97316',
+  ctaTextColor: '#ffffff',
+  ctaBorderRadius: 6,
+  paddingTop: 48,
+  paddingBottom: 48,
+}
+
+const DEFAULT_COMPARISON_TABLE: ComparisonTableProps = {
+  backgroundColor: '#ffffff',
+  title: 'Por Que Somos Melhores',
+  titleFontFamily: 'Montserrat',
+  titleColor: '#111827',
+  columns: [
+    { id: nanoid(), label: 'Our Product', isHighlight: true, highlightColor: '#f97316', logo: '' },
+    { id: nanoid(), label: 'Competitor A', isHighlight: false, highlightColor: '#6b7280', logo: '' },
+    { id: nanoid(), label: 'Competitor B', isHighlight: false, highlightColor: '#6b7280', logo: '' },
+  ],
+  rows: [
+    { id: nanoid(), feature: 'Suporte 24/7', values: {} },
+    { id: nanoid(), feature: 'Atualizações Gratuitas', values: {} },
+    { id: nanoid(), feature: 'Sincronização na Nuvem', values: {} },
+    { id: nanoid(), feature: 'Acesso à API', values: {} },
+  ],
+  checkColor: '#10b981',
+  crossColor: '#ef4444',
+  paddingTop: 48,
+  paddingBottom: 48,
+}
+
+const DEFAULT_PRICING: PricingProps = {
+  backgroundColor: '#f9fafb',
+  paddingTop: 48,
+  paddingBottom: 48,
+  plans: [
+    {
+      id: nanoid(), name: 'Básico', description: 'Ideal para pessoas físicas', price: 'R$49', priceUnit: '/mês',
+      isHighlight: false, highlightLabel: '', highlightColor: '#6366f1', cardBackgroundColor: '#ffffff',
+      features: ['5 Projetos', '10GB de Armazenamento', 'Suporte Básico'], ctaText: 'Começar', ctaUrl: '#',
+      ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', borderRadius: 8,
+    },
+    {
+      id: nanoid(), name: 'Pro', description: 'Ideal para equipes em crescimento', price: 'R$149', priceUnit: '/mês',
+      isHighlight: true, highlightLabel: 'Mais Popular', highlightColor: '#6366f1', cardBackgroundColor: '#1e1b4b',
+      features: ['Projetos Ilimitados', '100GB de Armazenamento', 'Suporte Prioritário', 'Acesso à API'],
+      ctaText: 'Testar Grátis', ctaUrl: '#', ctaBackgroundColor: '#6366f1', ctaTextColor: '#ffffff', borderRadius: 8,
+    },
+    {
+      id: nanoid(), name: 'Enterprise', description: 'Para grandes organizações', price: 'R$499', priceUnit: '/mês',
+      isHighlight: false, highlightLabel: '', highlightColor: '#6366f1', cardBackgroundColor: '#ffffff',
+      features: ['Tudo Ilimitado', 'Suporte Dedicado', 'Integrações Personalizadas', 'Garantia de SLA'],
+      ctaText: 'Falar com Vendas', ctaUrl: '#', ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', borderRadius: 8,
+    },
+  ],
+  titleFontFamily: 'Montserrat',
+  titleColor: '#111827',
+  priceFontFamily: 'Montserrat',
+  priceColor: '#111827',
+  featureFontFamily: 'Inter',
+  featureColor: '#374151',
+}
+
+const DEFAULT_FAQ: FaqProps = {
+  backgroundColor: '#ffffff',
+  title: 'Perguntas Frequentes',
+  titleFontFamily: 'Montserrat',
+  titleColor: '#111827',
+  faqs: [
+    { id: nanoid(), question: 'Como funciona?', answer: 'Basta se cadastrar, configurar suas preferências e começar a usar imediatamente. O onboarding leva menos de 5 minutos.', backgroundColor: '#f9fafb', borderColor: '#e5e7eb' },
+    { id: nanoid(), question: 'Tem período de teste gratuito?', answer: 'Sim! Oferecemos 14 dias de teste gratuito sem necessidade de cartão de crédito. Cancele quando quiser.', backgroundColor: '#f9fafb', borderColor: '#e5e7eb' },
+    { id: nanoid(), question: 'Posso cancelar a qualquer momento?', answer: 'Com certeza. Você pode cancelar sua assinatura a qualquer momento sem burocracia.', backgroundColor: '#f9fafb', borderColor: '#e5e7eb' },
+  ],
+  questionFontFamily: 'Inter',
+  questionColor: '#111827',
+  answerFontFamily: 'Inter',
+  answerColor: '#6b7280',
+  paddingTop: 48,
+  paddingBottom: 48,
+}
+
+const DEFAULT_SOCIAL_PROOF: SocialProofProps = {
+  backgroundColor: '#ffffff',
+  title: 'Siga-nos no Instagram',
+  subtitle: 'Faça parte da nossa comunidade de mais de 50 mil seguidores',
+  titleFontFamily: 'Montserrat',
+  titleColor: '#111827',
+  handle: '@suamarca',
+  ctaText: 'Seguir @suamarca',
+  ctaUrl: '#',
+  ctaBackgroundColor: '#e1306c',
+  ctaTextColor: '#ffffff',
+  images: [
+    { id: nanoid(), url: '', alt: 'Post 1' },
+    { id: nanoid(), url: '', alt: 'Post 2' },
+    { id: nanoid(), url: '', alt: 'Post 3' },
+    { id: nanoid(), url: '', alt: 'Post 4' },
+    { id: nanoid(), url: '', alt: 'Post 5' },
+    { id: nanoid(), url: '', alt: 'Post 6' },
+  ],
+  columns: 3,
+  paddingTop: 40,
+  paddingBottom: 40,
+}
+
+const DEFAULT_FOOTER: FooterProps = {
+  backgroundColor: '#111827',
+  logo: '',
+  logoAlt: 'Logo da Marca',
+  logoMaxWidth: 120,
+  tagline: 'Criando produtos incríveis para pessoas incríveis.',
+  links: [
+    { id: nanoid(), label: 'Site', url: '#' },
+    { id: nanoid(), label: 'Política de Privacidade', url: '#' },
+    { id: nanoid(), label: 'Descadastrar', url: '#' },
+  ],
+  socialLinks: [
+    { id: nanoid(), platform: 'instagram', url: '#' },
+    { id: nanoid(), platform: 'twitter', url: '#' },
+    { id: nanoid(), platform: 'linkedin', url: '#' },
+  ],
+  unsubscribeText: 'Cancelar inscrição nesta lista',
+  unsubscribeUrl: '#',
+  addressText: 'Rua Principal, 123 — Cidade, Estado 00000-000',
+  textColor: '#9ca3af',
+  linkColor: '#d1d5db',
+  fontFamily: 'Inter',
+  fontSize: 12,
+  paddingTop: 40,
+  paddingBottom: 40,
+}
+
+const DEFAULTS: Record<BlockType, Record<string, unknown>> = {
+  hero: DEFAULT_HERO as unknown as Record<string, unknown>,
+  announcement: DEFAULT_ANNOUNCEMENT as unknown as Record<string, unknown>,
+  sectionHeader: DEFAULT_SECTION_HEADER as unknown as Record<string, unknown>,
+  cardGrid: DEFAULT_CARD_GRID as unknown as Record<string, unknown>,
+  testimonial: DEFAULT_TESTIMONIAL as unknown as Record<string, unknown>,
+  logoBar: DEFAULT_LOGO_BAR as unknown as Record<string, unknown>,
+  featureList: DEFAULT_FEATURE_LIST as unknown as Record<string, unknown>,
+  ctaBanner: DEFAULT_CTA_BANNER as unknown as Record<string, unknown>,
+  comparisonTable: DEFAULT_COMPARISON_TABLE as unknown as Record<string, unknown>,
+  pricing: DEFAULT_PRICING as unknown as Record<string, unknown>,
+  faq: DEFAULT_FAQ as unknown as Record<string, unknown>,
+  socialProof: DEFAULT_SOCIAL_PROOF as unknown as Record<string, unknown>,
+  footer: DEFAULT_FOOTER as unknown as Record<string, unknown>,
+}
+
+export function createBlock(type: BlockType): Block {
+  return {
+    id: nanoid(),
+    type,
+    props: { ...DEFAULTS[type] },
+    visible: true,
+  }
+}
+
+export { DEFAULTS }

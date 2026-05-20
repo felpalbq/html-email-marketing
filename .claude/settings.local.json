@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"c:\\\\Users\\\\AJATTO\\\\Desktop\\\\FELIPE\\\\mail_design\"; $npm = \\(Get-Command npm\\).Source; Start-Process -FilePath $npm -ArgumentList \"run\",\"dev\" -NoNewWindow; Start-Sleep -Seconds 5; Write-Host \"done\")",
+      "PowerShell(winget --version 2>&1)",
+      "PowerShell(choco --version 2>&1)",
+      "PowerShell(choco install git -y 2>&1)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); git --version 2>&1)",
+      "PowerShell(choco install git -y --no-progress 2>&1)",
+      "PowerShell(scoop --version 2>&1)",
+      "PowerShell(Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression 2>&1)",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; scoop install git 2>&1)",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; git --version)",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; git config --global user.name; git config --global user.email)",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; git config --global user.name \"Felipe\"; git config --global user.email \"prialbq@gmail.com\")",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; cd \"c:\\\\Users\\\\AJATTO\\\\Desktop\\\\FELIPE\\\\mail_design\"; git init; git remote add origin https://github.com/felpalbq/html-email-marketing.git 2>&1)",
+      "PowerShell($env:Path += \";$env:USERPROFILE\\\\scoop\\\\shims\"; cd \"c:\\\\Users\\\\AJATTO\\\\Desktop\\\\FELIPE\\\\mail_design\"; git branch -m main; git add .; git commit -m \"Initial commit\" 2>&1)"
+    ]
+  }
+}
