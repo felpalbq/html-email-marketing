@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { nanoid } from '../utils/nanoid'
-import { createBlock } from '../blocks/index'
+import { createBlock, DEFAULTS } from '../blocks/index'
 import type { Block, BlockType, EmailDocument, GlobalSettings } from '../blocks/types'
 
 const DEFAULT_GLOBAL: GlobalSettings = {
@@ -8,9 +8,6 @@ const DEFAULT_GLOBAL: GlobalSettings = {
   previewText: '',
   emailWidth: 600,
   backgroundColor: '#f3f4f6',
-  defaultFontFamily: 'Inter',
-  defaultTextColor: '#111827',
-  defaultLinkColor: '#6366f1',
 }
 
 const DEFAULT_DOCUMENT: EmailDocument = {
@@ -20,18 +17,28 @@ const DEFAULT_DOCUMENT: EmailDocument = {
   blocks: [],
 }
 
+function migrateBlock(block: Block): Block {
+  const defaults = DEFAULTS[block.type]
+  if (!defaults) return block
+  return { ...block, props: { ...defaults, ...block.props } }
+}
+
 function loadFromStorage(): EmailDocument | null {
   try {
     const raw = localStorage.getItem('email-editor-doc')
     if (!raw) return null
-    return JSON.parse(raw) as EmailDocument
+    const doc = JSON.parse(raw) as EmailDocument
+    return { ...doc, blocks: doc.blocks.map(migrateBlock) }
   } catch {
     return null
   }
 }
 
+const HISTORY_LIMIT = 20
+
 interface EditorStore {
   document: EmailDocument
+  history: EmailDocument[]
   selectedBlockId: string | null
   previewMode: 'desktop' | 'mobile'
   showPreview: boolean
@@ -49,15 +56,26 @@ interface EditorStore {
   setShowSettings: (show: boolean) => void
   updateGlobalSettings: (settings: Partial<GlobalSettings>) => void
   updateDocumentName: (name: string) => void
+  undo: () => void
   newDocument: () => void
   saveToLocalStorage: () => void
   loadFromLocalStorage: () => void
 }
 
 let saveTimeout: ReturnType<typeof setTimeout> | null = null
+let historyTimer: ReturnType<typeof setTimeout> | null = null
+let pendingHistoryDoc: EmailDocument | null = null
+
+function flushPendingHistory(pushFn: (snapshot: EmailDocument) => void) {
+  if (!pendingHistoryDoc) return
+  if (historyTimer) { clearTimeout(historyTimer); historyTimer = null }
+  pushFn(pendingHistoryDoc)
+  pendingHistoryDoc = null
+}
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
   document: loadFromStorage() ?? DEFAULT_DOCUMENT,
+  history: [],
   selectedBlockId: null,
   previewMode: 'desktop',
   showPreview: false,
@@ -65,14 +83,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   addBlock: (type, position) => {
     const block = createBlock(type)
+    flushPendingHistory(snapshot => set(state => ({ history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot] })))
     set(state => {
       const blocks = [...state.document.blocks]
-      if (position !== undefined) {
-        blocks.splice(position, 0, block)
-      } else {
-        blocks.push(block)
-      }
+      if (position !== undefined) blocks.splice(position, 0, block)
+      else blocks.push(block)
       return {
+        history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
         document: { ...state.document, blocks },
         selectedBlockId: block.id,
       }
@@ -81,7 +98,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   removeBlock: (id) => {
+    flushPendingHistory(snapshot => set(state => ({ history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot] })))
     set(state => ({
+      history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
       document: {
         ...state.document,
         blocks: state.document.blocks.filter(b => b.id !== id),
@@ -92,6 +111,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   duplicateBlock: (id) => {
+    flushPendingHistory(snapshot => set(state => ({ history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot] })))
     set(state => {
       const idx = state.document.blocks.findIndex(b => b.id === id)
       if (idx === -1) return state
@@ -100,6 +120,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       const blocks = [...state.document.blocks]
       blocks.splice(idx + 1, 0, copy)
       return {
+        history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
         document: { ...state.document, blocks },
         selectedBlockId: copy.id,
       }
@@ -108,16 +129,25 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   reorderBlocks: (from, to) => {
+    flushPendingHistory(snapshot => set(state => ({ history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot] })))
     set(state => {
       const blocks = [...state.document.blocks]
       const [removed] = blocks.splice(from, 1)
       blocks.splice(to, 0, removed)
-      return { document: { ...state.document, blocks } }
+      return {
+        history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
+        document: { ...state.document, blocks },
+      }
     })
     get().saveToLocalStorage()
   },
 
   updateBlockProps: (id, props) => {
+    // Capture snapshot before the first change of this typing session
+    if (!pendingHistoryDoc) {
+      pendingHistoryDoc = get().document
+    }
+
     set(state => ({
       document: {
         ...state.document,
@@ -126,12 +156,28 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         ),
       },
     }))
+
+    // Commit snapshot to history after user stops changing (1.5s inactivity)
+    if (historyTimer) clearTimeout(historyTimer)
+    historyTimer = setTimeout(() => {
+      const snapshot = pendingHistoryDoc
+      pendingHistoryDoc = null
+      historyTimer = null
+      if (snapshot) {
+        set(state => ({
+          history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot],
+        }))
+      }
+      get().saveToLocalStorage()
+    }, 1500)
+
     if (saveTimeout) clearTimeout(saveTimeout)
     saveTimeout = setTimeout(() => get().saveToLocalStorage(), 500)
   },
 
   toggleBlockVisibility: (id) => {
     set(state => ({
+      history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
       document: {
         ...state.document,
         blocks: state.document.blocks.map(b =>
@@ -149,6 +195,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   updateGlobalSettings: (settings) => {
     set(state => ({
+      history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
       document: {
         ...state.document,
         globalSettings: { ...state.document.globalSettings, ...settings },
@@ -158,14 +205,39 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   updateDocumentName: (name) => {
-    set(state => ({ document: { ...state.document, name } }))
+    set(state => ({
+      history: [...state.history.slice(-HISTORY_LIMIT + 1), state.document],
+      document: { ...state.document, name },
+    }))
+    get().saveToLocalStorage()
+  },
+
+  undo: () => {
+    // Flush any pending prop-edit snapshot first
+    if (pendingHistoryDoc) {
+      if (historyTimer) { clearTimeout(historyTimer); historyTimer = null }
+      const snapshot = pendingHistoryDoc
+      pendingHistoryDoc = null
+      set(state => ({
+        history: [...state.history.slice(-HISTORY_LIMIT + 1), snapshot],
+      }))
+    }
+
+    const { history } = get()
+    if (history.length === 0) return
+    const prev = history[history.length - 1]
+    set(state => ({
+      document: prev,
+      history: state.history.slice(0, -1),
+      selectedBlockId: null,
+    }))
     get().saveToLocalStorage()
   },
 
   newDocument: () => {
     if (!confirm('Iniciar um novo email? O trabalho atual será perdido.')) return
-    const doc = { ...DEFAULT_DOCUMENT, id: nanoid(), name: 'My Email Campaign', blocks: [] }
-    set({ document: doc, selectedBlockId: null })
+    const doc = { ...DEFAULT_DOCUMENT, id: nanoid(), name: 'Minha Campanha de Email', blocks: [] }
+    set({ document: doc, selectedBlockId: null, history: [] })
     localStorage.removeItem('email-editor-doc')
   },
 
@@ -177,6 +249,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   loadFromLocalStorage: () => {
     const doc = loadFromStorage()
-    if (doc) set({ document: doc, selectedBlockId: null })
+    if (doc) set({ document: doc, selectedBlockId: null, history: [] })
   },
 }))

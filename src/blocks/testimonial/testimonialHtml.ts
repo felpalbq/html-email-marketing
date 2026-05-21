@@ -1,6 +1,7 @@
 import type { TestimonialProps, TestimonialItem } from '../types'
 import { fontStack } from '../../utils/fonts'
 import { nl2br } from '../../utils/nl2br'
+import { escapeHtml, escapeAttr, escapeSafeUrl } from '../../utils/escapeHtml'
 
 function stars(count: number, color: string): string {
   return Array.from({ length: 5 }, (_, i) =>
@@ -15,11 +16,11 @@ function singleCard(t: TestimonialItem, p: TestimonialProps, width: number): str
   const nameLineHeight = p.nameLineHeight ?? 1.4
 
   const avatar = t.avatar
-    ? `<img src="${t.avatar}" alt="${t.name}" width="48" height="48" style="display:block; width:48px; height:48px; border-radius:50%; margin-bottom:12px;" border="0">`
+    ? `<img src="${escapeAttr(t.avatar)}" alt="${escapeAttr(t.name)}" width="48" height="48" style="display:block; width:48px; height:48px; border-radius:50%; margin-bottom:12px;" border="0">`
     : `<div style="width:48px; height:48px; border-radius:50%; background-color:#e5e7eb; margin-bottom:12px;"></div>`
 
   const cta = t.ctaText
-    ? `<div style="margin-top:16px;"><a href="${t.ctaUrl}" style="display:inline-block; background-color:${t.ctaBackgroundColor}; color:${t.ctaTextColor}; font-size:14px; font-weight:600; padding:10px 22px; border-radius:4px; text-decoration:none;">${t.ctaText}</a></div>`
+    ? `<div style="margin-top:16px;"><a href="${escapeSafeUrl(t.ctaUrl || '#')}" style="display:inline-block; background-color:${t.ctaBackgroundColor}; color:${t.ctaTextColor}; font-size:14px; font-weight:600; padding:10px 22px; border-radius:4px; text-decoration:none;">${escapeHtml(t.ctaText)}</a></div>`
     : ''
 
   return `<table role="presentation" class="mobile-full" width="${width}" cellpadding="0" cellspacing="0" border="0"
@@ -33,8 +34,8 @@ function singleCard(t: TestimonialItem, p: TestimonialProps, width: number): str
         <tr>
           <td valign="middle" style="padding-right:12px;">${avatar}</td>
           <td valign="middle">
-            <div style="font-family:${fontStack(p.nameFontFamily)}; font-size:${nameFontSize}px; font-weight:700; color:${p.nameColor}; line-height:${nameLineHeight}; mso-line-height-rule:exactly;">${t.name}</div>
-            <div style="font-family:${fontStack(p.nameFontFamily)}; font-size:${Math.max(11, nameFontSize - 1)}px; color:#9ca3af;">${t.role}</div>
+            <div style="font-family:${fontStack(p.nameFontFamily)}; font-size:${nameFontSize}px; font-weight:700; color:${p.nameColor}; line-height:${nameLineHeight}; mso-line-height-rule:exactly;">${escapeHtml(t.name)}</div>
+            <div style="font-family:${fontStack(p.nameFontFamily)}; font-size:${Math.max(11, nameFontSize - 1)}px; color:#9ca3af;">${escapeHtml(t.role)}</div>
           </td>
         </tr>
       </table>

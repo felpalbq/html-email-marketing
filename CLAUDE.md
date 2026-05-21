@@ -19,6 +19,10 @@ Editor local de emails que gera HTML/CSS compatível com Gmail e Outlook a parti
 
 A única fonte de verdade é `src/store/editorStore.ts` (Zustand). Ela mantém um `EmailDocument` (configurações globais + array ordenado de `Block`s). Cada edição chama `updateBlockProps(id, partialProps)`, que salva automaticamente no `localStorage` com debounce de 500ms.
 
+### Migração de schema (localStorage)
+
+`loadFromStorage()` mescla automaticamente `DEFAULTS[block.type]` sobre cada bloco carregado. Isso garante que documentos antigos salvos sem props novos funcionem corretamente após qualquer adição de prop — nunca resulta em `undefined` nos geradores HTML.
+
 ---
 
 ## Assets Locais (Imagens e Ícones)
@@ -143,6 +147,40 @@ Todos os novos props de formatação usam `?? defaultValue` para retrocompatibil
 
 ---
 
+## Escaping de HTML nos geradores
+
+Todo texto de usuário inserido nos geradores HTML **deve** passar pelas funções de `src/utils/escapeHtml.ts`:
+
+| Função | Quando usar |
+|---|---|
+| `escapeHtml(text)` | Conteúdo de texto dentro de tags HTML (títulos, labels, badges, etc.) |
+| `escapeAttr(value)` | Valores de atributos HTML como `alt=""`, `src=""` |
+| `escapeSafeUrl(url)` | Atributos `href=""` e `src=""` com URLs fornecidas pelo usuário — bloqueia `javascript:` |
+| `escapeImageUrl(url)` | URLs dentro de `background-image: url('...')` em CSS — impede quebra de aspas simples e duplas |
+
+`nl2br(text)` já chama `escapeHtml` internamente — qualquer texto que passe por `nl2br` está automaticamente protegido.
+
+---
+
+## Configurações Globais (`GlobalSettings`)
+
+Interface em `src/blocks/types.ts`:
+
+```typescript
+interface GlobalSettings {
+  emailName: string       // nome do email (exibido no editor)
+  previewText: string     // texto oculto de pré-visualização
+  emailWidth: number      // largura do email em px (400–800, padrão 600)
+  backgroundColor: string // cor de fundo da página em volta do email
+}
+```
+
+- `emailWidth` é totalmente funcional: controla a largura no canvas do editor e o `max-width` no HTML exportado
+- **Não existem** `defaultFontFamily`, `defaultTextColor` ou `defaultLinkColor` — cada bloco define suas próprias fontes e cores
+- Controlados via painel "Configurações Globais" (ícone de engrenagem no Topbar)
+
+---
+
 ## Regras do gerador HTML (críticas para compatibilidade com email)
 
 Todo output de `src/generator/` deve seguir:
@@ -159,6 +197,7 @@ Todo output de `src/generator/` deve seguir:
 - Props novos sempre com fallback `?? defaultValue` — mantém retrocompat com localStorage
 - `mso-line-height-rule:exactly` junto a qualquer `line-height` customizado (Outlook)
 - Overlays transparentes: `rgba(0,0,0,0)` — nunca a palavra `transparent`
+- **Todo texto de usuário deve usar `escapeHtml`/`escapeAttr`/`escapeSafeUrl`** — ver seção acima
 
 ---
 

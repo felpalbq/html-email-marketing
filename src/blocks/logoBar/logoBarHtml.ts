@@ -1,18 +1,19 @@
 import type { LogoBarProps } from '../types'
 import { fontStack } from '../../utils/fonts'
+import { escapeHtml, escapeAttr, escapeSafeUrl } from '../../utils/escapeHtml'
 
 export function logoBarHtml(p: LogoBarProps): string {
   const opacity = p.opacity / 100
 
   const logosCells = p.logos.map(logo => {
     const img = logo.image
-      ? `<a href="${logo.url}" style="text-decoration:none;"><img src="${logo.image}" alt="${logo.alt}" style="display:block; max-height:${logo.maxHeight}px; height:auto; opacity:${opacity}; filter:grayscale(${opacity < 1 ? 80 : 0}%);" border="0"></a>`
+      ? `<a href="${escapeSafeUrl(logo.url || '#')}" style="text-decoration:none;"><img src="${escapeAttr(logo.image)}" alt="${escapeAttr(logo.alt || '')}" style="display:block; max-height:${logo.maxHeight}px; height:auto; opacity:${opacity}; filter:grayscale(${opacity < 1 ? 80 : 0}%);" border="0"></a>`
       : `<div style="background-color:#d1d5db; height:${logo.maxHeight}px; width:80px; opacity:${opacity}; border-radius:4px;"></div>`
     return `<td class="mobile-col" align="${p.alignment}" style="padding:0 ${Math.floor(p.gap / 2)}px 12px;">${img}</td>`
   }).join('\n')
 
   const title = p.title
-    ? `<tr><td align="${p.alignment}" style="padding-bottom:20px; font-family:${fontStack('Inter')}; font-size:13px; font-weight:600; color:#9ca3af; letter-spacing:1px; text-transform:uppercase;">${p.title}</td></tr>`
+    ? `<tr><td align="${p.alignment}" style="padding-bottom:20px; font-family:${fontStack('Inter')}; font-size:13px; font-weight:600; color:#9ca3af; letter-spacing:1px; text-transform:uppercase;">${escapeHtml(p.title)}</td></tr>`
     : ''
 
   return `

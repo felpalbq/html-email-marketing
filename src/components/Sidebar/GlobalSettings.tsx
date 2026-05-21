@@ -2,7 +2,7 @@ import { useEditorStore } from '../../store/editorStore'
 import { TextInput } from '../ui/TextInput'
 import { TextArea } from '../ui/TextArea'
 import { ColorPicker } from '../ui/ColorPicker'
-import { FontSelector } from '../ui/FontSelector'
+import { SliderInput } from '../ui/SliderInput'
 
 export function GlobalSettings() {
   const { document, updateGlobalSettings, setShowSettings } = useEditorStore()
@@ -18,10 +18,8 @@ export function GlobalSettings() {
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-1">
           <TextInput label="Nome do Email" value={gs.emailName} onChange={v => updateGlobalSettings({ emailName: v })} />
           <TextArea label="Texto de Pré-visualização (oculto)" value={gs.previewText} onChange={v => updateGlobalSettings({ previewText: v })} rows={2} placeholder="Aparece no preview da caixa de entrada..." />
+          <SliderInput label="Largura do Email" value={gs.emailWidth} onChange={v => updateGlobalSettings({ emailWidth: v })} min={400} max={800} step={10} unit="px" />
           <ColorPicker label="Cor de Fundo da Página" value={gs.backgroundColor} onChange={v => updateGlobalSettings({ backgroundColor: v })} />
-          <FontSelector label="Fonte Padrão" value={gs.defaultFontFamily} onChange={v => updateGlobalSettings({ defaultFontFamily: v })} />
-          <ColorPicker label="Cor de Texto Padrão" value={gs.defaultTextColor} onChange={v => updateGlobalSettings({ defaultTextColor: v })} />
-          <ColorPicker label="Cor de Link Padrão" value={gs.defaultLinkColor} onChange={v => updateGlobalSettings({ defaultLinkColor: v })} />
         </div>
         <div className="px-6 py-4 border-t border-gray-700">
           <button onClick={() => setShowSettings(false)} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-colors">Fechar</button>

@@ -20,7 +20,6 @@ import { footerHtml } from '../blocks/footer/footerHtml'
 
 function collectUsedFonts(doc: EmailDocument): string[] {
   const fonts = new Set<string>()
-  fonts.add(doc.globalSettings.defaultFontFamily)
 
   const traverse = (obj: unknown) => {
     if (!obj || typeof obj !== 'object') return
@@ -60,6 +59,16 @@ function generateBlockHtml(block: Block): string {
   }
 }
 
+function forceInlineColors(html: string): string {
+  return html.replace(/style="([^"]*)"/g, (_, styles) => {
+    const s = styles.trim().endsWith(';') ? styles : styles.trim() + ';'
+    const forced = s
+      .replace(/(background-color\s*:\s*)([^;!"]+?)(\s*!important)?\s*;/g, '$1$2!important;')
+      .replace(/(?<![a-z-])(color\s*:\s*)([^;!"]+?)(\s*!important)?\s*;/g, '$1$2!important;')
+    return `style="${forced}"`
+  })
+}
+
 export function generateEmailHtml(doc: EmailDocument): string {
   const usedFonts = collectUsedFonts(doc)
   const fontsUrl = buildGoogleFontsUrl(usedFonts)
@@ -80,14 +89,14 @@ export function generateEmailHtml(doc: EmailDocument): string {
     ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${gs.previewText}${'&nbsp;'.repeat(140)}</div>`
     : ''
 
-  return `<!DOCTYPE html>
+  const rawHtml = `<!DOCTYPE html>
 <html lang="pt-BR" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="only light">
   <meta name="supported-color-schemes" content="light">
   <title>${doc.name}</title>
   <!--[if mso]>
@@ -95,7 +104,7 @@ export function generateEmailHtml(doc: EmailDocument): string {
   <![endif]-->
   ${fontLink}
   <style>
-    :root{color-scheme:light}
+    :root{color-scheme:only light}
     body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
     table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
     img{-ms-interpolation-mode:bicubic}
@@ -103,7 +112,9 @@ export function generateEmailHtml(doc: EmailDocument): string {
     u+.u-body{background-color:${gs.backgroundColor}!important}
     u+.u-body .email-wrapper{background-color:${gs.backgroundColor}!important}
     [data-ogsc] body,[data-ogsc] .email-wrapper{background-color:${gs.backgroundColor}!important}
+    [data-ogsc] table,[data-ogsc] td,[data-ogsc] div,[data-ogsc] p,[data-ogsc] h1,[data-ogsc] h2,[data-ogsc] h3,[data-ogsc] a,[data-ogsc] span{color:inherit!important}
     @media (prefers-color-scheme:dark){
+      :root{color-scheme:only light!important}
       .dm-invert{filter:none!important}
       body,.email-wrapper{background-color:${gs.backgroundColor}!important;color:inherit!important}
     }
@@ -121,6 +132,7 @@ export function generateEmailHtml(doc: EmailDocument): string {
       .mobile-col table{width:100%!important;}
       .mobile-col img{max-width:100%!important;}
       .mobile-spacer{display:none!important;width:0!important;overflow:hidden!important}
+      .mobile-top-gap{padding-top:24px!important}
     }
   </style>
 </head>
@@ -139,4 +151,6 @@ export function generateEmailHtml(doc: EmailDocument): string {
   </table>
 </body>
 </html>`
+
+  return forceInlineColors(rawHtml)
 }

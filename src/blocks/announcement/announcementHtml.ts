@@ -1,8 +1,9 @@
 import type { AnnouncementProps } from '../types'
 import { fontStack } from '../../utils/fonts'
+import { escapeHtml } from '../../utils/escapeHtml'
 
 export function announcementHtml(p: AnnouncementProps): string {
-  const content = p.showIcon ? `${p.iconEmoji} ${p.text}` : p.text
+  const content = p.showIcon ? `${escapeHtml(p.iconEmoji)} ${escapeHtml(p.text)}` : escapeHtml(p.text)
   const lineHeight = p.lineHeight ?? 1.5
   const letterSpacing = p.letterSpacing ?? 0
   return `

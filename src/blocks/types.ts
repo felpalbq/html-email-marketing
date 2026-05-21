@@ -29,9 +29,6 @@ export interface GlobalSettings {
   previewText: string
   emailWidth: number
   backgroundColor: string
-  defaultFontFamily: string
-  defaultTextColor: string
-  defaultLinkColor: string
 }
 
 export interface EmailDocument {
@@ -227,6 +224,8 @@ export interface FeatureListProps {
   descriptionLineHeight: number
   descriptionLetterSpacing: number
   iconSize: number
+  iconPosition: 'left' | 'top'
+  iconVerticalAlign: 'top' | 'middle' | 'bottom'
 }
 
 export interface CtaBannerProps {
@@ -420,6 +419,7 @@ export interface StepsProps {
   steps: StepItem[]
   numberBackgroundColor: string
   numberColor: string
+  iconSize: number
   stepTitleFontFamily: string
   stepTitleFontSize: number
   stepTitleColor: string
@@ -445,6 +445,7 @@ export interface StatsProps {
   backgroundColor: string
   items: StatItem[]
   columns: 2 | 3 | 4
+  contentAlignment: 'left' | 'center' | 'right'
   valueFontFamily: string
   valueFontSize: number
   valueColor: string

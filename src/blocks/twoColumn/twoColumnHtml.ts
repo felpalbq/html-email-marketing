@@ -1,6 +1,7 @@
 import type { TwoColumnProps } from '../types'
 import { fontStack } from '../../utils/fonts'
 import { nl2br } from '../../utils/nl2br'
+import { escapeHtml, escapeAttr, escapeSafeUrl } from '../../utils/escapeHtml'
 
 export function twoColumnHtml(p: TwoColumnProps): string {
   const isTextLeft = (p.layout ?? 'text-left') === 'text-left'
@@ -17,21 +18,21 @@ export function twoColumnHtml(p: TwoColumnProps): string {
   const textWidth = 520 - imgWidth - 32
 
   const badge = p.badge
-    ? `<div style="margin-bottom:10px;"><span style="display:inline-block; background-color:${p.badgeColor}; color:${p.badgeTextColor}; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:20px;">${p.badge}</span></div>`
+    ? `<div style="margin-bottom:10px;"><span style="display:inline-block; background-color:${p.badgeColor}; color:${p.badgeTextColor}; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:20px;">${escapeHtml(p.badge)}</span></div>`
     : ''
 
   const textBlock = `
     ${badge}
     <h2 style="margin:0 0 14px; font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:${p.titleFontWeight ?? '700'}; color:${p.titleColor}; line-height:${titleLineHeight}; mso-line-height-rule:exactly;${titleLetterSpacing > 0 ? ` letter-spacing:${titleLetterSpacing}px;` : ''}">${nl2br(p.title)}</h2>
     <p style="margin:0 0 24px; font-family:${fontStack(p.bodyFontFamily)}; font-size:${p.bodyFontSize ?? 15}px; color:${p.bodyColor}; line-height:${bodyLineHeight}; mso-line-height-rule:exactly;${bodyLetterSpacing > 0 ? ` letter-spacing:${bodyLetterSpacing}px;` : ''}">${nl2br(p.bodyText)}</p>
-    ${p.ctaText ? `<a href="${p.ctaUrl}" style="display:inline-block; background-color:${p.ctaBackgroundColor}; color:${p.ctaTextColor}; font-family:${fontStack(p.titleFontFamily)}; font-size:${ctaFontSize}px; font-weight:${ctaFontWeight}; padding:${ctaPaddingV}px ${ctaPaddingH}px; border-radius:${p.ctaBorderRadius ?? 6}px; text-decoration:none; mso-padding-alt:${ctaPaddingV}px ${ctaPaddingH}px;">${p.ctaText}</a>` : ''}`
+    ${p.ctaText ? `<a href="${escapeSafeUrl(p.ctaUrl || '#')}" style="display:inline-block; background-color:${p.ctaBackgroundColor}; color:${p.ctaTextColor}; font-family:${fontStack(p.titleFontFamily)}; font-size:${ctaFontSize}px; font-weight:${ctaFontWeight}; padding:${ctaPaddingV}px ${ctaPaddingH}px; border-radius:${p.ctaBorderRadius ?? 6}px; text-decoration:none; mso-padding-alt:${ctaPaddingV}px ${ctaPaddingH}px;">${escapeHtml(p.ctaText)}</a>` : ''}`
 
   const img = p.image
-    ? `<img class="mobile-img" src="${p.image}" alt="${p.imageAlt}" width="${imgWidth}" style="display:block; width:${imgWidth}px; height:auto; border-radius:${p.imageBorderRadius ?? 8}px;" border="0">`
-    : `<div style="width:${imgWidth}px; height:220px; background-color:#e5e7eb; border-radius:${p.imageBorderRadius ?? 8}px;"></div>`
+    ? `<img class="mobile-img" src="${escapeAttr(p.image)}" alt="${escapeAttr(p.imageAlt || '')}" width="${imgWidth}" style="display:block; width:${imgWidth}px; height:auto; border-radius:${p.imageBorderRadius ?? 8}px;" border="0">`
+    : `<div style="width:100%; height:220px; background-color:#e5e7eb; border-radius:${p.imageBorderRadius ?? 8}px;"></div>`
 
   const textTd = `<td class="mobile-col" width="${textWidth}" valign="${vAlign}" style="width:${textWidth}px; padding:${isTextLeft ? '0 32px 0 0' : '0 0 0 32px'};">${textBlock}</td>`
-  const imgTd = `<td class="mobile-col" width="${imgWidth}" valign="${vAlign}" style="width:${imgWidth}px; padding-bottom:16px;">${img}</td>`
+  const imgTd = `<td class="mobile-col mobile-top-gap" width="${imgWidth}" valign="${vAlign}" style="width:${imgWidth}px; padding-bottom:16px;">${img}</td>`
 
   return `
 <tr>

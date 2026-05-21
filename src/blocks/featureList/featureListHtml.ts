@@ -1,27 +1,39 @@
 import type { FeatureListProps, FeatureItem } from '../types'
 import { fontStack } from '../../utils/fonts'
 import { nl2br } from '../../utils/nl2br'
+import { escapeHtml, escapeAttr } from '../../utils/escapeHtml'
 
 function featureCell(f: FeatureItem, p: FeatureListProps, width: number): string {
   const titleLineHeight = p.titleLineHeight ?? 1.3
   const titleLetterSpacing = p.titleLetterSpacing ?? 0
   const descLineHeight = p.descriptionLineHeight ?? 1.55
   const descLetterSpacing = p.descriptionLetterSpacing ?? 0
+  const iconPos = p.iconPosition ?? 'left'
+  const iconVAlign = p.iconVerticalAlign ?? 'top'
 
-  const icon = f.icon.startsWith('http') || f.icon.startsWith('/')
-    ? `<img src="${f.icon}" alt="" width="${p.iconSize}" height="${p.iconSize}" style="display:block;" border="0">`
-    : `<span style="font-size:${p.iconSize}px; line-height:1;">${f.icon}</span>`
+  const isUrl = f.icon.startsWith('http') || f.icon.startsWith('/')
+  const icon = isUrl
+    ? `<img src="${escapeAttr(f.icon)}" alt="" width="${p.iconSize}" height="${p.iconSize}" style="display:block;" border="0">`
+    : `<span style="font-size:${p.iconSize}px; line-height:1;">${escapeHtml(f.icon)}</span>`
+
+  const textContent = `
+    <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor}; margin-bottom:6px; line-height:${titleLineHeight}; mso-line-height-rule:exactly;${titleLetterSpacing > 0 ? ` letter-spacing:${titleLetterSpacing}px;` : ''}">${escapeHtml(f.title)}</div>
+    <div style="font-family:${fontStack(p.descriptionFontFamily)}; font-size:${p.descriptionFontSize}px; color:${p.descriptionColor}; line-height:${descLineHeight}; mso-line-height-rule:exactly;${descLetterSpacing > 0 ? ` letter-spacing:${descLetterSpacing}px;` : ''}">${nl2br(f.description)}</div>`
+
+  const innerTable = iconPos === 'top'
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td align="center" style="padding-bottom:12px;">${icon}</td></tr>
+        <tr><td>${textContent}</td></tr>
+      </table>`
+    : `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td valign="${iconVAlign}" style="padding-right:14px;">${icon}</td>
+          <td valign="${iconVAlign}">${textContent}</td>
+        </tr>
+      </table>`
 
   return `<td class="mobile-col" width="${width}" valign="top" style="width:${width}px; padding-bottom:28px;">
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-      <tr>
-        <td valign="top" style="padding-right:14px;">${icon}</td>
-        <td valign="top">
-          <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor}; margin-bottom:6px; line-height:${titleLineHeight}; mso-line-height-rule:exactly;${titleLetterSpacing > 0 ? ` letter-spacing:${titleLetterSpacing}px;` : ''}">${f.title}</div>
-          <div style="font-family:${fontStack(p.descriptionFontFamily)}; font-size:${p.descriptionFontSize}px; color:${p.descriptionColor}; line-height:${descLineHeight}; mso-line-height-rule:exactly;${descLetterSpacing > 0 ? ` letter-spacing:${descLetterSpacing}px;` : ''}">${nl2br(f.description)}</div>
-        </td>
-      </tr>
-    </table>
+    ${innerTable}
   </td>`
 }
 

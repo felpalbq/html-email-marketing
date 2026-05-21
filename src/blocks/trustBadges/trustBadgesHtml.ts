@@ -1,15 +1,16 @@
 import type { TrustBadgesProps, TrustBadgeItem } from '../types'
 import { fontStack } from '../../utils/fonts'
+import { escapeHtml, escapeAttr } from '../../utils/escapeHtml'
 
 function badgeCell(item: TrustBadgeItem, p: TrustBadgesProps, width: number): string {
   const iconHtml = !item.icon
     ? ''
     : item.icon.startsWith('http') || item.icon.startsWith('/')
-      ? `<img src="${item.icon}" alt="" width="${p.iconSize ?? 32}" height="${p.iconSize ?? 32}" style="display:inline-block;" border="0"><br>`
-      : `<span style="font-size:${p.iconSize ?? 32}px; line-height:1;">${item.icon}</span><br>`
+      ? `<img src="${escapeAttr(item.icon)}" alt="" width="${p.iconSize ?? 32}" height="${p.iconSize ?? 32}" style="display:inline-block;" border="0"><br>`
+      : `<span style="font-size:${p.iconSize ?? 32}px; line-height:1;">${escapeHtml(item.icon)}</span><br>`
 
   const subtitle = item.subtitle
-    ? `<div style="font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; margin-top:2px;">${item.subtitle}</div>`
+    ? `<div style="font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; margin-top:2px;">${escapeHtml(item.subtitle)}</div>`
     : ''
 
   return `<td class="mobile-col" width="${width}" valign="top" align="${p.alignment}" style="width:${width}px; text-align:${p.alignment}; padding:12px 8px;">
@@ -19,7 +20,7 @@ function badgeCell(item: TrustBadgeItem, p: TrustBadgesProps, width: number): st
       </tr>
       <tr>
         <td align="${p.alignment}">
-          <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor};">${item.title}</div>
+          <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor};">${escapeHtml(item.title)}</div>
           ${subtitle}
         </td>
       </tr>

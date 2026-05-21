@@ -2,6 +2,7 @@ import type { HeroProps } from '../types'
 import { fontStack } from '../../utils/fonts'
 import { hexToRgba } from '../../utils/colorUtils'
 import { nl2br } from '../../utils/nl2br'
+import { escapeHtml, escapeAttr, escapeSafeUrl, escapeImageUrl } from '../../utils/escapeHtml'
 
 export function heroHtml(p: HeroProps): string {
   const align = p.contentAlignment
@@ -10,7 +11,7 @@ export function heroHtml(p: HeroProps): string {
   const hasImage = !!p.backgroundImage
   const bgPosition = p.backgroundPosition ?? 'center center'
   const bgStyle = hasImage
-    ? `background-image: url('${p.backgroundImage}'); background-size: cover; background-position: ${bgPosition}; background-color: #1a1a2e;`
+    ? `background-image: url('${escapeImageUrl(p.backgroundImage)}'); background-size: cover; background-position: ${bgPosition}; background-color: #1a1a2e;`
     : 'background-color: #1a1a2e;'
 
   const lineHeight = p.headlineLineHeight ?? 1.15
@@ -24,7 +25,7 @@ export function heroHtml(p: HeroProps): string {
   const ctaAlign = p.ctaAlignment ?? align
 
   const vmlStart = hasImage
-    ? `<!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="${p.backgroundImage}" color="#1a1a2e"/><v:textbox inset="0,0,0,0"><div><![endif]-->`
+    ? `<!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="${escapeAttr(p.backgroundImage)}" color="#1a1a2e"/><v:textbox inset="0,0,0,0"><div><![endif]-->`
     : ''
   const vmlEnd = hasImage
     ? `<!--[if gte mso 9]></div></v:textbox></v:rect><![endif]-->`
@@ -32,7 +33,7 @@ export function heroHtml(p: HeroProps): string {
 
   const badge = p.badge
     ? `<tr><td align="${align}" style="padding-bottom:16px;">
-        <span style="display:inline-block; background-color:${p.badgeColor}; color:#ffffff; font-family:${fontStack(p.headlineFontFamily)}; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; mso-padding-alt:5px 14px;">${p.badge}</span>
+        <span style="display:inline-block; background-color:${p.badgeColor}; color:#ffffff; font-family:${fontStack(p.headlineFontFamily)}; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; mso-padding-alt:5px 14px;">${escapeHtml(p.badge)}</span>
        </td></tr>`
     : ''
 
@@ -48,7 +49,7 @@ export function heroHtml(p: HeroProps): string {
 
   const cta = p.ctaText
     ? `<tr><td align="${ctaAlign}">
-        <a href="${p.ctaUrl}" style="display:inline-block; font-family:${fontStack(p.headlineFontFamily)}; font-size:${ctaFontSize}px; font-weight:${ctaFontWeight}; color:${p.ctaTextColor}; background-color:${p.ctaBackgroundColor}; padding:${ctaPaddingV}px ${ctaPaddingH}px; border-radius:${p.ctaBorderRadius}px; text-decoration:none; mso-padding-alt:${ctaPaddingV}px ${ctaPaddingH}px;">${p.ctaText}</a>
+        <a href="${escapeSafeUrl(p.ctaUrl || '#')}" style="display:inline-block; font-family:${fontStack(p.headlineFontFamily)}; font-size:${ctaFontSize}px; font-weight:${ctaFontWeight}; color:${p.ctaTextColor}; background-color:${p.ctaBackgroundColor}; padding:${ctaPaddingV}px ${ctaPaddingH}px; border-radius:${p.ctaBorderRadius}px; text-decoration:none; mso-padding-alt:${ctaPaddingV}px ${ctaPaddingH}px;">${escapeHtml(p.ctaText)}</a>
        </td></tr>`
     : ''
 
@@ -78,17 +79,22 @@ export function heroHtml(p: HeroProps): string {
 </tr>`
   }
 
-  // Split overlay — left or right: 2-column inner table
+  // Split overlay — left or right: gradient fades from solid to transparent at the inner edge
   const overlayWidthPx = Math.round(560 * ((p.overlayWidth ?? 60) / 100))
   const transparentWidthPx = 560 - overlayWidthPx
+  // Gradient: solid for first 55% of column, then fades to transparent at the column edge
+  // The transparent edge merges seamlessly with the adjacent transparent column, creating a full gradient
+  const gradDir = direction === 'left' ? 'to right' : 'to left'
+  const gradientCss = `linear-gradient(${gradDir}, ${overlayBg} 0%, ${overlayBg} 55%, rgba(0,0,0,0) 100%)`
+  // bgcolor is the Outlook fallback (solid, no gradient — Outlook ignores background-image on td)
   const [textCol, emptyCol] = direction === 'left'
     ? [
-        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-color:${overlayBg}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px;">${content}</td>`,
+        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-image:${gradientCss}; padding:${p.paddingTop}px 40px ${p.paddingBottom}px 32px;">${content}</td>`,
         `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
       ]
     : [
         `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
-        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-color:${overlayBg}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px;">${content}</td>`,
+        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-image:${gradientCss}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px 40px;">${content}</td>`,
       ]
 
   return `

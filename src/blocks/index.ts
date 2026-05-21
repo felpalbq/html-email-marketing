@@ -230,6 +230,8 @@ const DEFAULT_FEATURE_LIST: FeatureListProps = {
   descriptionLineHeight: 1.55,
   descriptionLetterSpacing: 0,
   iconSize: 32,
+  iconPosition: 'left',
+  iconVerticalAlign: 'top',
 }
 
 const DEFAULT_CTA_BANNER: CtaBannerProps = {
@@ -406,6 +408,7 @@ const DEFAULT_STEPS: StepsProps = {
   ],
   numberBackgroundColor: '#f97316',
   numberColor: '#ffffff',
+  iconSize: 40,
   stepTitleFontFamily: 'Montserrat',
   stepTitleFontSize: 15,
   stepTitleColor: '#111827',
@@ -422,6 +425,7 @@ const DEFAULT_STEPS: StepsProps = {
 
 const DEFAULT_STATS: StatsProps = {
   backgroundColor: '#1e1b4b',
+  contentAlignment: 'center',
   items: [
     { id: nanoid(), value: '4.9★', label: 'Avaliação Média', icon: '' },
     { id: nanoid(), value: '500+', label: 'Clientes Satisfeitos', icon: '' },

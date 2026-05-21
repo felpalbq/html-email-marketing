@@ -8,11 +8,11 @@ export function StatsBlock({ props: p }: { props: StatsProps }) {
     <div style={{ backgroundColor: p.backgroundColor, padding: `${p.paddingTop}px 40px ${p.paddingBottom}px` }}>
       <div style={{ display: 'flex', alignItems: 'stretch' }}>
         {p.items.map((item, i) => (
-          <div key={item.id} style={{ flex: 1, textAlign: 'center', padding: '0 8px', borderRight: p.showDivider && i < p.items.length - 1 ? `1px solid ${p.dividerColor}33` : 'none' }}>
+          <div key={item.id} style={{ flex: 1, textAlign: p.contentAlignment ?? 'center', padding: '0 8px', borderRight: p.showDivider && i < p.items.length - 1 ? `1px solid ${p.dividerColor}33` : 'none' }}>
             {item.icon && (
               <div style={{ marginBottom: 8 }}>
                 {isImageUrl(item.icon)
-                  ? <img src={item.icon} alt="" style={{ width: p.iconSize ?? 28, height: p.iconSize ?? 28, display: 'block', margin: '0 auto' }} />
+                  ? <img src={item.icon} alt="" style={{ width: p.iconSize ?? 28, height: p.iconSize ?? 28, display: 'block', margin: (p.contentAlignment ?? 'center') === 'center' ? '0 auto' : (p.contentAlignment === 'right' ? '0 0 0 auto' : '0') }} />
                   : <span style={{ fontSize: p.iconSize ?? 28, lineHeight: 1 }}>{item.icon}</span>}
               </div>
             )}
