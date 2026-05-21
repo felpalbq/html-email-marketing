@@ -4,6 +4,8 @@ import { fontStack } from '../../utils/fonts'
 const PLATFORM_LABELS: Record<string, string> = { instagram: 'IG', facebook: 'FB', twitter: 'TW', tiktok: 'TK', youtube: 'YT', linkedin: 'LI' }
 
 export function FooterBlock({ props: p }: { props: FooterProps }) {
+  const socialIconBg = p.socialIconBgColor ?? '#374151'
+
   return (
     <div style={{ backgroundColor: p.backgroundColor, padding: `${p.paddingTop}px 40px ${p.paddingBottom}px`, textAlign: 'center' }}>
       {p.logo
@@ -12,11 +14,16 @@ export function FooterBlock({ props: p }: { props: FooterProps }) {
       {p.tagline && <p style={{ margin: '0 0 16px', fontFamily: fontStack(p.fontFamily), fontSize: p.fontSize, color: p.textColor, lineHeight: 1.5 }}>{p.tagline}</p>}
       {p.socialLinks.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 16 }}>
-          {p.socialLinks.map(s => (
-            <a key={s.id} href="#" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', backgroundColor: '#374151', color: p.linkColor, fontSize: 10, fontWeight: 700, textDecoration: 'none', fontFamily: fontStack(p.fontFamily) }}>
-              {PLATFORM_LABELS[s.platform]}
-            </a>
-          ))}
+          {p.socialLinks.map(s => {
+            const size = s.iconSize ?? 32
+            return (
+              <a key={s.id} href="#" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: size, height: size, borderRadius: '50%', backgroundColor: s.icon ? 'transparent' : socialIconBg, textDecoration: 'none', overflow: 'hidden', flexShrink: 0 }}>
+                {s.icon
+                  ? <img src={s.icon} alt={s.platform} style={{ width: size, height: size, display: 'block', borderRadius: '50%' }} />
+                  : <span style={{ color: p.linkColor, fontSize: 10, fontWeight: 700, fontFamily: fontStack(p.fontFamily) }}>{PLATFORM_LABELS[s.platform] || s.platform.slice(0, 2).toUpperCase()}</span>}
+              </a>
+            )
+          })}
         </div>
       )}
       {p.links.length > 0 && (

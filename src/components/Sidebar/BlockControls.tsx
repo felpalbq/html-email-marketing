@@ -33,26 +33,13 @@ const BG_POSITION_OPTIONS = [
   { label: 'Topo Esquerda', value: 'left top' },
   { label: 'Topo Direita', value: 'right top' },
 ]
-const OVERLAY_DIR_OPTIONS = [
-  { label: 'Cobertura Total', value: 'full' },
-  { label: 'Apenas Esquerda', value: 'left' },
-  { label: 'Apenas Direita', value: 'right' },
-]
-
 function HeroControls({ props: p, update }: { props: HeroProps, update: (p: Partial<HeroProps>) => void }) {
-  const direction = p.overlayDirection ?? 'full'
   return (
     <>
       <Section title="Fundo">
         <ImageInput label="Imagem de Fundo" value={p.backgroundImage} onChange={v => update({ backgroundImage: v })} assetType="images" />
         <TextInput label="Texto Alt da Imagem" value={p.backgroundImageAlt} onChange={v => update({ backgroundImageAlt: v })} />
         <SelectInput label="Posição da Imagem" value={p.backgroundPosition ?? 'center center'} onChange={v => update({ backgroundPosition: v })} options={BG_POSITION_OPTIONS} />
-        <ColorPicker label="Cor do Overlay" value={p.overlayColor} onChange={v => update({ overlayColor: v })} />
-        <SliderInput label="Opacidade do Overlay" value={p.overlayOpacity} onChange={v => update({ overlayOpacity: v })} unit="%" />
-        <SelectInput label="Direção do Overlay" value={direction} onChange={v => update({ overlayDirection: v as HeroProps['overlayDirection'] })} options={OVERLAY_DIR_OPTIONS} />
-        {direction !== 'full' && (
-          <SliderInput label="Largura do Overlay" value={p.overlayWidth ?? 60} onChange={v => update({ overlayWidth: v })} min={30} max={80} unit="%" />
-        )}
       </Section>
       <Section title="Badge / Etiqueta" defaultOpen={false}>
         <TextInput label="Texto do Badge" value={p.badge} onChange={v => update({ badge: v })} placeholder="Opcional" />
@@ -299,6 +286,10 @@ function FeatureListControls({ props: p, update }: { props: FeatureListProps, up
     <>
       <Section title="Layout">
         <SelectInput label="Colunas" value={String(p.columns)} onChange={v => update({ columns: Number(v) as 1|2 })} options={[{ label: '1 Coluna', value: '1' }, { label: '2 Colunas', value: '2' }]} />
+        <SelectInput label="Posição do Ícone" value={p.iconPosition ?? 'left'} onChange={v => update({ iconPosition: v as 'left' | 'top' })} options={[{ label: 'Esquerda', value: 'left' }, { label: 'Acima', value: 'top' }]} />
+        {(p.iconPosition ?? 'left') === 'left' && (
+          <SelectInput label="Alinhamento Vertical do Ícone" value={p.iconVerticalAlign ?? 'top'} onChange={v => update({ iconVerticalAlign: v as 'top' | 'middle' | 'bottom' })} options={VALIGN_OPTIONS} />
+        )}
         <SliderInput label="Tamanho do Ícone" value={p.iconSize} onChange={v => update({ iconSize: v })} min={16} max={64} unit="px" />
         <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
         <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={120} unit="px" />
@@ -597,6 +588,7 @@ function FooterControls({ props: p, update }: { props: FooterProps, update: (p: 
         />
       </Section>
       <Section title="Redes Sociais">
+        <ColorPicker label="Fundo dos Ícones Sociais" value={p.socialIconBgColor ?? '#374151'} onChange={v => update({ socialIconBgColor: v })} />
         <ListEditor<SocialLink>
           label="Redes Sociais"
           items={p.socialLinks}
@@ -647,6 +639,7 @@ function StepsControls({ props: p, update }: { props: StepsProps, update: (p: Pa
         <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={120} unit="px" />
       </Section>
       <Section title="Números / Ícones" defaultOpen={false}>
+        <SliderInput label="Tamanho do Ícone" value={p.iconSize ?? 40} onChange={v => update({ iconSize: v })} min={24} max={80} unit="px" />
         <ColorPicker label="Fundo do Número" value={p.numberBackgroundColor} onChange={v => update({ numberBackgroundColor: v })} />
         <ColorPicker label="Cor do Número" value={p.numberColor} onChange={v => update({ numberColor: v })} />
       </Section>
@@ -685,6 +678,7 @@ function StatsControls({ props: p, update }: { props: StatsProps, update: (p: Pa
     <>
       <Section title="Layout">
         <SelectInput label="Colunas" value={String(p.columns)} onChange={v => update({ columns: Number(v) as 2|3|4 })} options={[{ label: '2', value: '2' }, { label: '3', value: '3' }, { label: '4', value: '4' }]} />
+        <SelectInput label="Alinhamento" value={p.contentAlignment ?? 'center'} onChange={v => update({ contentAlignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
         <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
         <ToggleSwitch label="Mostrar Divisor" value={p.showDivider} onChange={v => update({ showDivider: v })} />
         {p.showDivider && <ColorPicker label="Cor do Divisor" value={p.dividerColor} onChange={v => update({ dividerColor: v })} />}

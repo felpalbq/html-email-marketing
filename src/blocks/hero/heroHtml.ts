@@ -1,13 +1,10 @@
 import type { HeroProps } from '../types'
 import { fontStack } from '../../utils/fonts'
-import { hexToRgba } from '../../utils/colorUtils'
 import { nl2br } from '../../utils/nl2br'
 import { escapeHtml, escapeAttr, escapeSafeUrl, escapeImageUrl } from '../../utils/escapeHtml'
 
 export function heroHtml(p: HeroProps): string {
   const align = p.contentAlignment
-  const direction = p.overlayDirection ?? 'full'
-  const overlayBg = p.overlayOpacity > 0 ? hexToRgba(p.overlayColor, p.overlayOpacity / 100) : 'rgba(0,0,0,0)'
   const hasImage = !!p.backgroundImage
   const bgPosition = p.backgroundPosition ?? 'center center'
   const bgStyle = hasImage
@@ -60,43 +57,6 @@ export function heroHtml(p: HeroProps): string {
     ${cta}
   </table>`
 
-  // Full overlay — single column, overlay on the td background
-  if (direction === 'full') {
-    return `
-<tr>
-  <td>
-    ${vmlStart}
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-      style="min-height:${p.minHeight}px; ${bgStyle}">
-      <tr>
-        <td class="mobile-padding" bgcolor="#1a1a2e" style="background-color:${overlayBg}; padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
-          ${content}
-        </td>
-      </tr>
-    </table>
-    ${vmlEnd}
-  </td>
-</tr>`
-  }
-
-  // Split overlay — left or right: gradient fades from solid to transparent at the inner edge
-  const overlayWidthPx = Math.round(560 * ((p.overlayWidth ?? 60) / 100))
-  const transparentWidthPx = 560 - overlayWidthPx
-  // Gradient: solid for first 55% of column, then fades to transparent at the column edge
-  // The transparent edge merges seamlessly with the adjacent transparent column, creating a full gradient
-  const gradDir = direction === 'left' ? 'to right' : 'to left'
-  const gradientCss = `linear-gradient(${gradDir}, ${overlayBg} 0%, ${overlayBg} 55%, rgba(0,0,0,0) 100%)`
-  // bgcolor is the Outlook fallback (solid, no gradient — Outlook ignores background-image on td)
-  const [textCol, emptyCol] = direction === 'left'
-    ? [
-        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-image:${gradientCss}; padding:${p.paddingTop}px 40px ${p.paddingBottom}px 32px;">${content}</td>`,
-        `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
-      ]
-    : [
-        `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
-        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-image:${gradientCss}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px 40px;">${content}</td>`,
-      ]
-
   return `
 <tr>
   <td>
@@ -104,13 +64,8 @@ export function heroHtml(p: HeroProps): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
       style="min-height:${p.minHeight}px; ${bgStyle}">
       <tr>
-        <td style="padding:0;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              ${textCol}
-              ${emptyCol}
-            </tr>
-          </table>
+        <td class="mobile-padding" bgcolor="#1a1a2e" style="padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
+          ${content}
         </td>
       </tr>
     </table>

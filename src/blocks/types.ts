@@ -43,10 +43,6 @@ export interface HeroProps {
   backgroundImage: string
   backgroundImageAlt: string
   backgroundPosition: string
-  overlayColor: string
-  overlayOpacity: number
-  overlayDirection: 'full' | 'left' | 'right'
-  overlayWidth: number
   badge: string
   badgeColor: string
   headline: string
@@ -387,6 +383,7 @@ export interface FooterProps {
   tagline: string
   links: FooterLink[]
   socialLinks: SocialLink[]
+  socialIconBgColor?: string
   unsubscribeText: string
   unsubscribeUrl: string
   addressText: string

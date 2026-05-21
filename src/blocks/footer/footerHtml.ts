@@ -28,8 +28,9 @@ export function footerHtml(p: FooterProps): string {
             const iconContent = s.icon
               ? `<img src="${escapeAttr(s.icon)}" alt="${escapeAttr(s.platform)}" width="${size}" height="${size}" style="display:block; width:${size}px; height:${size}px; border-radius:50%;" border="0">`
               : `<span style="font-family:${fontStack(p.fontFamily)}; font-size:11px; font-weight:700; color:${p.linkColor}; line-height:${size}px;">${SOCIAL_ICONS[s.platform] || escapeHtml(s.platform.slice(0, 2).toUpperCase())}</span>`
+            const iconBg = s.icon ? 'rgba(0,0,0,0)' : (p.socialIconBgColor ?? '#374151')
             return `<td style="padding:0 6px;">
-              <a href="${escapeSafeUrl(s.url || '#')}" style="display:inline-block; background-color:${s.icon ? 'rgba(0,0,0,0)' : '#374151'}; width:${size}px; height:${size}px; line-height:${size}px; text-align:center; text-decoration:none; border-radius:50%; overflow:hidden;">${iconContent}</a>
+              <a href="${escapeSafeUrl(s.url || '#')}" style="display:inline-block; background-color:${iconBg}; width:${size}px; height:${size}px; line-height:${size}px; text-align:center; text-decoration:none; border-radius:50%; overflow:hidden;">${iconContent}</a>
             </td>`
           }).join('\n')}
         </tr>
