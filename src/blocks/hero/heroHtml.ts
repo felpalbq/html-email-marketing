@@ -7,9 +7,9 @@ export function heroHtml(p: HeroProps): string {
   const align = p.contentAlignment
   const hasImage = !!p.backgroundImage
   const bgPosition = p.backgroundPosition ?? 'center center'
-  const bgStyle = hasImage
-    ? `background-image: url('${escapeImageUrl(p.backgroundImage)}'); background-size: cover; background-position: ${bgPosition}; background-color: #1a1a2e;`
-    : 'background-color: #1a1a2e;'
+  const tdBgStyle = hasImage
+    ? `background-color:#1a1a2e; background-image:url('${escapeImageUrl(p.backgroundImage)}'); background-size:cover; background-position:${bgPosition};`
+    : 'background-color:#1a1a2e;'
 
   const lineHeight = p.headlineLineHeight ?? 1.15
   const letterSpacing = p.headlineLetterSpacing ?? 0
@@ -62,9 +62,9 @@ export function heroHtml(p: HeroProps): string {
   <td>
     ${vmlStart}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-      style="min-height:${p.minHeight}px; ${bgStyle}">
+      style="min-height:${p.minHeight}px;">
       <tr>
-        <td class="mobile-padding" bgcolor="#1a1a2e" style="padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
+        <td class="mobile-padding" bgcolor="#1a1a2e" style="${tdBgStyle} padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
           ${content}
         </td>
       </tr>

@@ -9,6 +9,7 @@ export function PreviewFrame({ html, mode }: PreviewFrameProps) {
   const width = mode === 'mobile' ? 360 : 680
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(600)
+  const htmlWithBase = html.replace('<head>', `<head><base href="${window.location.origin}/">`);
 
   useEffect(() => {
     const iframe = iframeRef.current
@@ -30,7 +31,7 @@ export function PreviewFrame({ html, mode }: PreviewFrameProps) {
       <div style={{ width }} className="relative">
         <iframe
           ref={iframeRef}
-          srcDoc={html}
+          srcDoc={htmlWithBase}
           width={width}
           style={{
             border: 'none',
