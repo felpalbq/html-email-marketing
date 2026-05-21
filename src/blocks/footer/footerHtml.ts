@@ -22,10 +22,15 @@ export function footerHtml(p: FooterProps): string {
   const socialLinks = p.socialLinks.length
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 20px;">
         <tr>
-          ${p.socialLinks.map(s =>
-            `<td style="padding:0 6px;">
-              <a href="${s.url}" style="display:inline-block; background-color:#374151; color:${p.linkColor}; font-family:${fontStack(p.fontFamily)}; font-size:11px; font-weight:700; width:32px; height:32px; line-height:32px; text-align:center; text-decoration:none; border-radius:50%;">${SOCIAL_ICONS[s.platform] || s.platform.slice(0, 2).toUpperCase()}</a>
-            </td>`).join('\n')}
+          ${p.socialLinks.map(s => {
+            const size = s.iconSize ?? 32
+            const iconContent = s.icon
+              ? `<img src="${s.icon}" alt="${s.platform}" width="${size}" height="${size}" style="display:block; width:${size}px; height:${size}px; border-radius:50%;" border="0">`
+              : `<span style="font-family:${fontStack(p.fontFamily)}; font-size:11px; font-weight:700; color:${p.linkColor}; line-height:${size}px;">${SOCIAL_ICONS[s.platform] || s.platform.slice(0, 2).toUpperCase()}</span>`
+            return `<td style="padding:0 6px;">
+              <a href="${s.url}" style="display:inline-block; background-color:${s.icon ? 'transparent' : '#374151'}; width:${size}px; height:${size}px; line-height:${size}px; text-align:center; text-decoration:none; border-radius:50%; overflow:hidden;">${iconContent}</a>
+            </td>`
+          }).join('\n')}
         </tr>
       </table>`
     : ''

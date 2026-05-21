@@ -18,46 +18,77 @@ import type {
   TestimonialProps, TestimonialItem, LogoBarProps, LogoItem, FeatureListProps, FeatureItem,
   CtaBannerProps, ComparisonTableProps, PricingProps, PricingPlan,
   FaqProps, FaqItem, SocialProofProps, FooterProps, FooterLink, SocialLink,
+  StepsProps, StepItem, StatsProps, StatItem, TrustBadgesProps, TrustBadgeItem, TwoColumnProps,
 } from '../../blocks/types'
 
 const ALIGNMENT_OPTIONS = [{ label: 'Esquerda', value: 'left' }, { label: 'Centro', value: 'center' }, { label: 'Direita', value: 'right' }]
 const FONT_WEIGHT_OPTIONS = [{ label: 'Normal', value: '400' }, { label: 'Médio', value: '500' }, { label: 'Seminegrito', value: '600' }, { label: 'Negrito', value: '700' }, { label: 'Extra Negrito', value: '800' }, { label: 'Preto', value: '900' }]
+const VALIGN_OPTIONS = [{ label: 'Topo', value: 'top' }, { label: 'Centro', value: 'middle' }, { label: 'Base', value: 'bottom' }]
+const BG_POSITION_OPTIONS = [
+  { label: 'Centro', value: 'center center' },
+  { label: 'Topo', value: 'center top' },
+  { label: 'Base', value: 'center bottom' },
+  { label: 'Esquerda', value: 'left center' },
+  { label: 'Direita', value: 'right center' },
+  { label: 'Topo Esquerda', value: 'left top' },
+  { label: 'Topo Direita', value: 'right top' },
+]
+const OVERLAY_DIR_OPTIONS = [
+  { label: 'Cobertura Total', value: 'full' },
+  { label: 'Apenas Esquerda', value: 'left' },
+  { label: 'Apenas Direita', value: 'right' },
+]
 
 function HeroControls({ props: p, update }: { props: HeroProps, update: (p: Partial<HeroProps>) => void }) {
+  const direction = p.overlayDirection ?? 'full'
   return (
     <>
       <Section title="Fundo">
-        <ImageInput label="Imagem de Fundo" value={p.backgroundImage} onChange={v => update({ backgroundImage: v })} />
+        <ImageInput label="Imagem de Fundo" value={p.backgroundImage} onChange={v => update({ backgroundImage: v })} assetType="images" />
         <TextInput label="Texto Alt da Imagem" value={p.backgroundImageAlt} onChange={v => update({ backgroundImageAlt: v })} />
+        <SelectInput label="Posição da Imagem" value={p.backgroundPosition ?? 'center center'} onChange={v => update({ backgroundPosition: v })} options={BG_POSITION_OPTIONS} />
         <ColorPicker label="Cor do Overlay" value={p.overlayColor} onChange={v => update({ overlayColor: v })} />
         <SliderInput label="Opacidade do Overlay" value={p.overlayOpacity} onChange={v => update({ overlayOpacity: v })} unit="%" />
+        <SelectInput label="Direção do Overlay" value={direction} onChange={v => update({ overlayDirection: v as HeroProps['overlayDirection'] })} options={OVERLAY_DIR_OPTIONS} />
+        {direction !== 'full' && (
+          <SliderInput label="Largura do Overlay" value={p.overlayWidth ?? 60} onChange={v => update({ overlayWidth: v })} min={30} max={80} unit="%" />
+        )}
       </Section>
-      <Section title="Badge / Etiqueta">
+      <Section title="Badge / Etiqueta" defaultOpen={false}>
         <TextInput label="Texto do Badge" value={p.badge} onChange={v => update({ badge: v })} placeholder="Opcional" />
         <ColorPicker label="Cor do Badge" value={p.badgeColor} onChange={v => update({ badgeColor: v })} />
       </Section>
       <Section title="Título Principal">
-        <TextArea label="Título" value={p.headline} onChange={v => update({ headline: v })} rows={2} />
+        <TextArea label="Título (Enter = quebra de linha)" value={p.headline} onChange={v => update({ headline: v })} rows={3} />
         <FontSelector label="Fonte" value={p.headlineFontFamily} onChange={v => update({ headlineFontFamily: v })} />
-        <SliderInput label="Tamanho da Fonte" value={p.headlineFontSize} onChange={v => update({ headlineFontSize: v })} min={20} max={80} unit="px" />
-        <SelectInput label="Peso da Fonte" value={p.headlineFontWeight} onChange={v => update({ headlineFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Tamanho" value={p.headlineFontSize} onChange={v => update({ headlineFontSize: v })} min={20} max={80} unit="px" />
+        <SelectInput label="Peso" value={p.headlineFontWeight} onChange={v => update({ headlineFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
         <ColorPicker label="Cor" value={p.headlineColor} onChange={v => update({ headlineColor: v })} />
+        <SliderInput label="Entrelinha" value={p.headlineLineHeight ?? 1.15} onChange={v => update({ headlineLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaçamento entre Letras" value={p.headlineLetterSpacing ?? 0} onChange={v => update({ headlineLetterSpacing: v })} min={0} max={12} unit="px" />
       </Section>
-      <Section title="Subtítulo">
-        <TextArea label="Subtítulo" value={p.subtitle} onChange={v => update({ subtitle: v })} rows={2} />
+      <Section title="Subtítulo" defaultOpen={false}>
+        <TextArea label="Subtítulo (Enter = quebra de linha)" value={p.subtitle} onChange={v => update({ subtitle: v })} rows={3} />
         <FontSelector label="Fonte" value={p.subtitleFontFamily} onChange={v => update({ subtitleFontFamily: v })} />
-        <SliderInput label="Tamanho da Fonte" value={p.subtitleFontSize} onChange={v => update({ subtitleFontSize: v })} min={12} max={32} unit="px" />
+        <SliderInput label="Tamanho" value={p.subtitleFontSize} onChange={v => update({ subtitleFontSize: v })} min={12} max={32} unit="px" />
         <ColorPicker label="Cor" value={p.subtitleColor} onChange={v => update({ subtitleColor: v })} />
+        <SliderInput label="Entrelinha" value={p.subtitleLineHeight ?? 1.6} onChange={v => update({ subtitleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaçamento entre Letras" value={p.subtitleLetterSpacing ?? 0} onChange={v => update({ subtitleLetterSpacing: v })} min={0} max={12} unit="px" />
       </Section>
-      <Section title="Botão CTA">
+      <Section title="Botão CTA" defaultOpen={false}>
         <TextInput label="Texto do Botão" value={p.ctaText} onChange={v => update({ ctaText: v })} />
         <TextInput label="URL do Botão" value={p.ctaUrl} onChange={v => update({ ctaUrl: v })} placeholder="https://" />
         <ColorPicker label="Fundo" value={p.ctaBackgroundColor} onChange={v => update({ ctaBackgroundColor: v })} />
         <ColorPicker label="Cor do Texto" value={p.ctaTextColor} onChange={v => update({ ctaTextColor: v })} />
+        <SliderInput label="Tamanho da Fonte" value={p.ctaFontSize ?? 16} onChange={v => update({ ctaFontSize: v })} min={11} max={28} unit="px" />
+        <SelectInput label="Peso da Fonte" value={p.ctaFontWeight ?? '700'} onChange={v => update({ ctaFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Padding Vertical" value={p.ctaPaddingV ?? 14} onChange={v => update({ ctaPaddingV: v })} min={6} max={32} unit="px" />
+        <SliderInput label="Padding Horizontal" value={p.ctaPaddingH ?? 36} onChange={v => update({ ctaPaddingH: v })} min={12} max={80} unit="px" />
         <SliderInput label="Arredondamento" value={p.ctaBorderRadius} onChange={v => update({ ctaBorderRadius: v })} min={0} max={40} unit="px" />
+        <SelectInput label="Alinhamento do Botão" value={p.ctaAlignment ?? p.contentAlignment} onChange={v => update({ ctaAlignment: v as HeroProps['ctaAlignment'] })} options={ALIGNMENT_OPTIONS} />
       </Section>
-      <Section title="Layout">
-        <SelectInput label="Alinhamento" value={p.contentAlignment} onChange={v => update({ contentAlignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
+      <Section title="Layout" defaultOpen={false}>
+        <SelectInput label="Alinhamento do Conteúdo" value={p.contentAlignment} onChange={v => update({ contentAlignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
         <SliderInput label="Altura Mínima" value={p.minHeight} onChange={v => update({ minHeight: v })} min={200} max={800} unit="px" />
         <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={160} unit="px" />
         <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={160} unit="px" />
@@ -77,11 +108,13 @@ function AnnouncementControls({ props: p, update }: { props: AnnouncementProps, 
       </Section>
       <Section title="Tipografia">
         <FontSelector label="Fonte" value={p.fontFamily} onChange={v => update({ fontFamily: v })} />
-        <SliderInput label="Tamanho da Fonte" value={p.fontSize} onChange={v => update({ fontSize: v })} min={10} max={24} unit="px" />
-        <SelectInput label="Peso da Fonte" value={p.fontWeight} onChange={v => update({ fontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Tamanho" value={p.fontSize} onChange={v => update({ fontSize: v })} min={10} max={24} unit="px" />
+        <SelectInput label="Peso" value={p.fontWeight} onChange={v => update({ fontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
         <ColorPicker label="Cor do Texto" value={p.textColor} onChange={v => update({ textColor: v })} />
+        <SliderInput label="Entrelinha" value={p.lineHeight ?? 1.5} onChange={v => update({ lineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaçamento entre Letras" value={p.letterSpacing ?? 0} onChange={v => update({ letterSpacing: v })} min={0} max={8} unit="px" />
       </Section>
-      <Section title="Cores & Espaçamento">
+      <Section title="Cores & Espaçamento" defaultOpen={false}>
         <ColorPicker label="Cor de Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
         <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={60} unit="px" />
         <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={60} unit="px" />
@@ -94,17 +127,21 @@ function SectionHeaderControls({ props: p, update }: { props: SectionHeaderProps
   return (
     <>
       <Section title="Título">
-        <TextArea label="Título" value={p.title} onChange={v => update({ title: v })} rows={2} />
+        <TextArea label="Título (Enter = quebra de linha)" value={p.title} onChange={v => update({ title: v })} rows={2} />
         <FontSelector label="Fonte" value={p.titleFontFamily} onChange={v => update({ titleFontFamily: v })} />
-        <SliderInput label="Tamanho da Fonte" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={20} max={72} unit="px" />
-        <SelectInput label="Peso da Fonte" value={p.titleFontWeight} onChange={v => update({ titleFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Tamanho" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={20} max={72} unit="px" />
+        <SelectInput label="Peso" value={p.titleFontWeight} onChange={v => update({ titleFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
         <ColorPicker label="Cor" value={p.titleColor} onChange={v => update({ titleColor: v })} />
+        <SliderInput label="Entrelinha" value={p.titleLineHeight ?? 1.2} onChange={v => update({ titleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaçamento entre Letras" value={p.titleLetterSpacing ?? 0} onChange={v => update({ titleLetterSpacing: v })} min={0} max={12} unit="px" />
       </Section>
       <Section title="Subtítulo" defaultOpen={false}>
-        <TextInput label="Subtítulo (decorativo)" value={p.subtitle} onChange={v => update({ subtitle: v })} />
+        <TextArea label="Subtítulo (Enter = quebra de linha)" value={p.subtitle} onChange={v => update({ subtitle: v })} rows={2} />
         <FontSelector label="Fonte" value={p.subtitleFontFamily} onChange={v => update({ subtitleFontFamily: v })} />
-        <SliderInput label="Tamanho da Fonte" value={p.subtitleFontSize} onChange={v => update({ subtitleFontSize: v })} min={12} max={36} unit="px" />
+        <SliderInput label="Tamanho" value={p.subtitleFontSize} onChange={v => update({ subtitleFontSize: v })} min={12} max={36} unit="px" />
         <ColorPicker label="Cor" value={p.subtitleColor} onChange={v => update({ subtitleColor: v })} />
+        <SliderInput label="Entrelinha" value={p.subtitleLineHeight ?? 1.4} onChange={v => update({ subtitleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaçamento entre Letras" value={p.subtitleLetterSpacing ?? 0} onChange={v => update({ subtitleLetterSpacing: v })} min={0} max={12} unit="px" />
       </Section>
       <Section title="Layout" defaultOpen={false}>
         <SelectInput label="Alinhamento" value={p.alignment} onChange={v => update({ alignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
@@ -118,7 +155,7 @@ function SectionHeaderControls({ props: p, update }: { props: SectionHeaderProps
 
 function CardGridControls({ props: p, update }: { props: CardGridProps, update: (p: Partial<CardGridProps>) => void }) {
   const defaultCard: Omit<CardItem, 'id'> = {
-    image: '', imageAlt: '', badge: '', badgeColor: '#f97316', title: 'Novo Card',
+    image: '', imageAlt: '', imageHeight: 180, badge: '', badgeColor: '#f97316', title: 'Novo Card',
     description: 'Descrição do card.', ctaText: 'Saiba Mais', ctaUrl: '#',
     ctaBackgroundColor: '#111827', ctaTextColor: '#ffffff', cardBackgroundColor: '#ffffff', borderRadius: 8,
   }
@@ -135,9 +172,13 @@ function CardGridControls({ props: p, update }: { props: CardGridProps, update: 
         <FontSelector label="Fonte do Título" value={p.titleFontFamily} onChange={v => update({ titleFontFamily: v })} />
         <SliderInput label="Tamanho do Título" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={12} max={24} unit="px" />
         <ColorPicker label="Cor do Título" value={p.titleColor} onChange={v => update({ titleColor: v })} />
+        <SliderInput label="Entrelinha do Título" value={p.titleLineHeight ?? 1.3} onChange={v => update({ titleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Título" value={p.titleLetterSpacing ?? 0} onChange={v => update({ titleLetterSpacing: v })} min={0} max={8} unit="px" />
         <FontSelector label="Fonte da Descrição" value={p.descriptionFontFamily} onChange={v => update({ descriptionFontFamily: v })} />
         <SliderInput label="Tamanho da Descrição" value={p.descriptionFontSize} onChange={v => update({ descriptionFontSize: v })} min={10} max={20} unit="px" />
         <ColorPicker label="Cor da Descrição" value={p.descriptionColor} onChange={v => update({ descriptionColor: v })} />
+        <SliderInput label="Entrelinha da Descrição" value={p.descriptionLineHeight ?? 1.5} onChange={v => update({ descriptionLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Descrição" value={p.descriptionLetterSpacing ?? 0} onChange={v => update({ descriptionLetterSpacing: v })} min={0} max={8} unit="px" />
       </Section>
       <Section title="Cards">
         <ListEditor<CardItem>
@@ -147,8 +188,9 @@ function CardGridControls({ props: p, update }: { props: CardGridProps, update: 
           defaultItem={defaultCard}
           renderItem={(card, onChange) => (
             <>
-              <ImageInput label="Imagem" value={card.image} onChange={v => onChange({ ...card, image: v })} />
+              <ImageInput label="Imagem" value={card.image} onChange={v => onChange({ ...card, image: v })} assetType="images" />
               <TextInput label="Texto Alt" value={card.imageAlt} onChange={v => onChange({ ...card, imageAlt: v })} />
+              <SliderInput label="Altura da Imagem" value={card.imageHeight ?? 180} onChange={v => onChange({ ...card, imageHeight: v })} min={80} max={400} unit="px" />
               <TextInput label="Badge" value={card.badge} onChange={v => onChange({ ...card, badge: v })} />
               <ColorPicker label="Cor do Badge" value={card.badgeColor} onChange={v => onChange({ ...card, badgeColor: v })} />
               <TextInput label="Título" value={card.title} onChange={v => onChange({ ...card, title: v })} />
@@ -183,8 +225,12 @@ function TestimonialControls({ props: p, update }: { props: TestimonialProps, up
       </Section>
       <Section title="Tipografia" defaultOpen={false}>
         <FontSelector label="Fonte do Nome" value={p.nameFontFamily} onChange={v => update({ nameFontFamily: v })} />
+        <SliderInput label="Tamanho do Nome" value={p.nameFontSize ?? 13} onChange={v => update({ nameFontSize: v })} min={10} max={20} unit="px" />
+        <SliderInput label="Entrelinha do Nome" value={p.nameLineHeight ?? 1.4} onChange={v => update({ nameLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
         <ColorPicker label="Cor do Nome" value={p.nameColor} onChange={v => update({ nameColor: v })} />
         <FontSelector label="Fonte da Citação" value={p.quoteFontFamily} onChange={v => update({ quoteFontFamily: v })} />
+        <SliderInput label="Tamanho da Citação" value={p.quoteFontSize ?? 14} onChange={v => update({ quoteFontSize: v })} min={10} max={20} unit="px" />
+        <SliderInput label="Entrelinha da Citação" value={p.quoteLineHeight ?? 1.6} onChange={v => update({ quoteLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
         <ColorPicker label="Cor da Citação" value={p.quoteColor} onChange={v => update({ quoteColor: v })} />
       </Section>
       <Section title="Depoimentos">
@@ -195,7 +241,7 @@ function TestimonialControls({ props: p, update }: { props: TestimonialProps, up
           defaultItem={defaultItem}
           renderItem={(item, onChange) => (
             <>
-              <ImageInput label="Avatar" value={item.avatar} onChange={v => onChange({ ...item, avatar: v })} />
+              <ImageInput label="Avatar" value={item.avatar} onChange={v => onChange({ ...item, avatar: v })} assetType="images" />
               <TextInput label="Nome" value={item.name} onChange={v => onChange({ ...item, name: v })} />
               <TextInput label="Cargo" value={item.role} onChange={v => onChange({ ...item, role: v })} />
               <TextArea label="Citação" value={item.quote} onChange={v => onChange({ ...item, quote: v })} rows={3} />
@@ -235,7 +281,7 @@ function LogoBarControls({ props: p, update }: { props: LogoBarProps, update: (p
           defaultItem={defaultLogo}
           renderItem={(logo, onChange) => (
             <>
-              <ImageInput label="Imagem do Logo" value={logo.image} onChange={v => onChange({ ...logo, image: v })} />
+              <ImageInput label="Imagem do Logo" value={logo.image} onChange={v => onChange({ ...logo, image: v })} assetType="images" />
               <TextInput label="Texto Alt" value={logo.alt} onChange={v => onChange({ ...logo, alt: v })} />
               <TextInput label="URL" value={logo.url} onChange={v => onChange({ ...logo, url: v })} />
               <SliderInput label="Altura Máxima" value={logo.maxHeight} onChange={v => onChange({ ...logo, maxHeight: v })} min={16} max={80} unit="px" />
@@ -262,9 +308,13 @@ function FeatureListControls({ props: p, update }: { props: FeatureListProps, up
         <FontSelector label="Fonte do Título" value={p.titleFontFamily} onChange={v => update({ titleFontFamily: v })} />
         <SliderInput label="Tamanho do Título" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={12} max={24} unit="px" />
         <ColorPicker label="Cor do Título" value={p.titleColor} onChange={v => update({ titleColor: v })} />
+        <SliderInput label="Entrelinha do Título" value={p.titleLineHeight ?? 1.3} onChange={v => update({ titleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Título" value={p.titleLetterSpacing ?? 0} onChange={v => update({ titleLetterSpacing: v })} min={0} max={8} unit="px" />
         <FontSelector label="Fonte da Descrição" value={p.descriptionFontFamily} onChange={v => update({ descriptionFontFamily: v })} />
         <SliderInput label="Tamanho da Descrição" value={p.descriptionFontSize} onChange={v => update({ descriptionFontSize: v })} min={10} max={20} unit="px" />
         <ColorPicker label="Cor da Descrição" value={p.descriptionColor} onChange={v => update({ descriptionColor: v })} />
+        <SliderInput label="Entrelinha da Descrição" value={p.descriptionLineHeight ?? 1.55} onChange={v => update({ descriptionLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Descrição" value={p.descriptionLetterSpacing ?? 0} onChange={v => update({ descriptionLetterSpacing: v })} min={0} max={8} unit="px" />
       </Section>
       <Section title="Diferenciais">
         <ListEditor<FeatureItem>
@@ -274,7 +324,7 @@ function FeatureListControls({ props: p, update }: { props: FeatureListProps, up
           defaultItem={defaultFeature}
           renderItem={(f, onChange) => (
             <>
-              <TextInput label="Ícone (emoji ou URL)" value={f.icon} onChange={v => onChange({ ...f, icon: v })} />
+              <ImageInput label="Ícone (emoji, URL ou biblioteca)" value={f.icon} onChange={v => onChange({ ...f, icon: v })} assetType="icons" />
               <TextInput label="Título" value={f.title} onChange={v => onChange({ ...f, title: v })} />
               <TextArea label="Descrição" value={f.description} onChange={v => onChange({ ...f, description: v })} rows={2} />
             </>
@@ -298,22 +348,33 @@ function CtaBannerControls({ props: p, update }: { props: CtaBannerProps, update
         <TextInput label="Badge" value={p.badge} onChange={v => update({ badge: v })} />
         <ColorPicker label="Fundo do Badge" value={p.badgeColor} onChange={v => update({ badgeColor: v })} />
         <ColorPicker label="Texto do Badge" value={p.badgeTextColor} onChange={v => update({ badgeTextColor: v })} />
-        <TextArea label="Título" value={p.headline} onChange={v => update({ headline: v })} rows={2} />
+        <TextArea label="Título (Enter = quebra de linha)" value={p.headline} onChange={v => update({ headline: v })} rows={2} />
         <FontSelector label="Fonte do Título" value={p.headlineFontFamily} onChange={v => update({ headlineFontFamily: v })} />
         <SliderInput label="Tamanho do Título" value={p.headlineFontSize} onChange={v => update({ headlineFontSize: v })} min={18} max={56} unit="px" />
         <ColorPicker label="Cor do Título" value={p.headlineColor} onChange={v => update({ headlineColor: v })} />
-        <TextArea label="Texto do Corpo" value={p.bodyText} onChange={v => update({ bodyText: v })} rows={2} />
+        <SliderInput label="Entrelinha do Título" value={p.headlineLineHeight ?? 1.2} onChange={v => update({ headlineLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Título" value={p.headlineLetterSpacing ?? 0} onChange={v => update({ headlineLetterSpacing: v })} min={0} max={12} unit="px" />
+        <TextArea label="Texto do Corpo (Enter = quebra)" value={p.bodyText} onChange={v => update({ bodyText: v })} rows={2} />
+        <FontSelector label="Fonte do Corpo" value={p.bodyFontFamily} onChange={v => update({ bodyFontFamily: v })} />
+        <SliderInput label="Tamanho do Corpo" value={p.bodyFontSize ?? 16} onChange={v => update({ bodyFontSize: v })} min={12} max={24} unit="px" />
         <ColorPicker label="Cor do Corpo" value={p.bodyColor} onChange={v => update({ bodyColor: v })} />
+        <SliderInput label="Entrelinha do Corpo" value={p.bodyLineHeight ?? 1.6} onChange={v => update({ bodyLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
       </Section>
       <Section title="Imagem" defaultOpen={false}>
-        <ImageInput label="Imagem" value={p.image} onChange={v => update({ image: v })} />
+        <ImageInput label="Imagem" value={p.image} onChange={v => update({ image: v })} assetType="images" />
         <TextInput label="Texto Alt" value={p.imageAlt} onChange={v => update({ imageAlt: v })} />
+        <SliderInput label="Largura da Imagem" value={p.imageWidth ?? 220} onChange={v => update({ imageWidth: v })} min={80} max={400} unit="px" />
+        <SelectInput label="Alinhamento da Imagem" value={p.imageAlignment ?? 'center'} onChange={v => update({ imageAlignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
       </Section>
       <Section title="Botão CTA" defaultOpen={false}>
         <TextInput label="Texto do Botão" value={p.ctaText} onChange={v => update({ ctaText: v })} />
         <TextInput label="URL do Botão" value={p.ctaUrl} onChange={v => update({ ctaUrl: v })} />
         <ColorPicker label="Fundo" value={p.ctaBackgroundColor} onChange={v => update({ ctaBackgroundColor: v })} />
         <ColorPicker label="Cor do Texto" value={p.ctaTextColor} onChange={v => update({ ctaTextColor: v })} />
+        <SliderInput label="Tamanho da Fonte" value={p.ctaFontSize ?? 16} onChange={v => update({ ctaFontSize: v })} min={11} max={28} unit="px" />
+        <SelectInput label="Peso da Fonte" value={p.ctaFontWeight ?? '700'} onChange={v => update({ ctaFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Padding Vertical" value={p.ctaPaddingV ?? 14} onChange={v => update({ ctaPaddingV: v })} min={6} max={32} unit="px" />
+        <SliderInput label="Padding Horizontal" value={p.ctaPaddingH ?? 28} onChange={v => update({ ctaPaddingH: v })} min={12} max={80} unit="px" />
         <SliderInput label="Arredondamento" value={p.ctaBorderRadius} onChange={v => update({ ctaBorderRadius: v })} min={0} max={40} unit="px" />
       </Section>
     </>
@@ -492,7 +553,7 @@ function SocialProofControls({ props: p, update }: { props: SocialProofProps, up
           defaultItem={{ url: '', alt: 'Post' }}
           renderItem={(img, onChange) => (
             <>
-              <ImageInput label="URL da Imagem" value={img.url} onChange={v => onChange({ ...img, url: v })} />
+              <ImageInput label="Imagem" value={img.url} onChange={v => onChange({ ...img, url: v })} assetType="images" />
               <TextInput label="Texto Alt" value={img.alt} onChange={v => onChange({ ...img, alt: v })} />
             </>
           )}
@@ -507,7 +568,7 @@ function FooterControls({ props: p, update }: { props: FooterProps, update: (p: 
   return (
     <>
       <Section title="Marca">
-        <ImageInput label="Logo" value={p.logo} onChange={v => update({ logo: v })} />
+        <ImageInput label="Logo" value={p.logo} onChange={v => update({ logo: v })} assetType="images" />
         <TextInput label="Alt / Nome da Marca" value={p.logoAlt} onChange={v => update({ logoAlt: v })} />
         <SliderInput label="Largura Máxima do Logo" value={p.logoMaxWidth} onChange={v => update({ logoMaxWidth: v })} min={60} max={300} unit="px" />
         <TextArea label="Tagline" value={p.tagline} onChange={v => update({ tagline: v })} rows={2} />
@@ -540,11 +601,13 @@ function FooterControls({ props: p, update }: { props: FooterProps, update: (p: 
           label="Redes Sociais"
           items={p.socialLinks}
           onChange={socialLinks => update({ socialLinks })}
-          defaultItem={{ platform: 'instagram', url: '#' }}
+          defaultItem={{ platform: 'instagram', url: '#', icon: '', iconSize: 32 }}
           renderItem={(s, onChange) => (
             <>
               <SelectInput label="Plataforma" value={s.platform} onChange={v => onChange({ ...s, platform: v as SocialLink['platform'] })} options={PLATFORM_OPTIONS} />
               <TextInput label="URL" value={s.url} onChange={v => onChange({ ...s, url: v })} />
+              <ImageInput label="Ícone personalizado (PNG)" value={s.icon ?? ''} onChange={v => onChange({ ...s, icon: v })} assetType="icons" />
+              <SliderInput label="Tamanho do Ícone" value={s.iconSize ?? 32} onChange={v => onChange({ ...s, iconSize: v })} min={16} max={64} unit="px" />
             </>
           )}
         />
@@ -553,6 +616,198 @@ function FooterControls({ props: p, update }: { props: FooterProps, update: (p: 
         <TextInput label="Texto de Cancelamento" value={p.unsubscribeText} onChange={v => update({ unsubscribeText: v })} />
         <TextInput label="URL de Cancelamento" value={p.unsubscribeUrl} onChange={v => update({ unsubscribeUrl: v })} />
         <TextInput label="Endereço" value={p.addressText} onChange={v => update({ addressText: v })} />
+      </Section>
+    </>
+  )
+}
+
+// --- New block controls ---
+
+function StepsControls({ props: p, update }: { props: StepsProps, update: (p: Partial<StepsProps>) => void }) {
+  const defaultStep: Omit<StepItem, 'id'> = { icon: '', title: 'Passo', description: 'Descrição do passo.' }
+  return (
+    <>
+      <Section title="Cabeçalho">
+        <ToggleSwitch label="Mostrar Título da Seção" value={p.showSectionTitle} onChange={v => update({ showSectionTitle: v })} />
+        {p.showSectionTitle && (
+          <>
+            <TextInput label="Título da Seção" value={p.sectionTitle} onChange={v => update({ sectionTitle: v })} />
+            <FontSelector label="Fonte" value={p.sectionTitleFontFamily} onChange={v => update({ sectionTitleFontFamily: v })} />
+            <SliderInput label="Tamanho" value={p.sectionTitleFontSize} onChange={v => update({ sectionTitleFontSize: v })} min={18} max={56} unit="px" />
+            <ColorPicker label="Cor" value={p.sectionTitleColor} onChange={v => update({ sectionTitleColor: v })} />
+          </>
+        )}
+      </Section>
+      <Section title="Layout">
+        <SelectInput label="Orientação" value={p.layout ?? 'horizontal'} onChange={v => update({ layout: v as 'horizontal' | 'vertical' })} options={[{ label: 'Horizontal', value: 'horizontal' }, { label: 'Vertical', value: 'vertical' }]} />
+        <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
+        <ToggleSwitch label="Mostrar Conector" value={p.showConnector} onChange={v => update({ showConnector: v })} />
+        {p.showConnector && <ColorPicker label="Cor do Conector" value={p.connectorColor ?? '#e5e7eb'} onChange={v => update({ connectorColor: v })} />}
+        <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={120} unit="px" />
+        <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={120} unit="px" />
+      </Section>
+      <Section title="Números / Ícones" defaultOpen={false}>
+        <ColorPicker label="Fundo do Número" value={p.numberBackgroundColor} onChange={v => update({ numberBackgroundColor: v })} />
+        <ColorPicker label="Cor do Número" value={p.numberColor} onChange={v => update({ numberColor: v })} />
+      </Section>
+      <Section title="Tipografia" defaultOpen={false}>
+        <FontSelector label="Fonte do Título" value={p.stepTitleFontFamily} onChange={v => update({ stepTitleFontFamily: v })} />
+        <SliderInput label="Tamanho do Título" value={p.stepTitleFontSize} onChange={v => update({ stepTitleFontSize: v })} min={11} max={24} unit="px" />
+        <ColorPicker label="Cor do Título" value={p.stepTitleColor} onChange={v => update({ stepTitleColor: v })} />
+        <SliderInput label="Entrelinha Título" value={p.stepTitleLineHeight ?? 1.3} onChange={v => update({ stepTitleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <FontSelector label="Fonte da Descrição" value={p.descriptionFontFamily} onChange={v => update({ descriptionFontFamily: v })} />
+        <SliderInput label="Tamanho da Descrição" value={p.descriptionFontSize} onChange={v => update({ descriptionFontSize: v })} min={10} max={20} unit="px" />
+        <ColorPicker label="Cor da Descrição" value={p.descriptionColor} onChange={v => update({ descriptionColor: v })} />
+        <SliderInput label="Entrelinha Descrição" value={p.descriptionLineHeight ?? 1.55} onChange={v => update({ descriptionLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+      </Section>
+      <Section title="Passos">
+        <ListEditor<StepItem>
+          label="Passos"
+          items={p.steps}
+          onChange={steps => update({ steps })}
+          defaultItem={defaultStep}
+          renderItem={(step, onChange) => (
+            <>
+              <ImageInput label="Ícone (imagem, emoji ou vazio = número)" value={step.icon} onChange={v => onChange({ ...step, icon: v })} assetType="icons" />
+              <TextInput label="Título" value={step.title} onChange={v => onChange({ ...step, title: v })} />
+              <TextArea label="Descrição" value={step.description} onChange={v => onChange({ ...step, description: v })} rows={2} />
+            </>
+          )}
+        />
+      </Section>
+    </>
+  )
+}
+
+function StatsControls({ props: p, update }: { props: StatsProps, update: (p: Partial<StatsProps>) => void }) {
+  const defaultStat: Omit<StatItem, 'id'> = { value: '0', label: 'Métrica', icon: '' }
+  return (
+    <>
+      <Section title="Layout">
+        <SelectInput label="Colunas" value={String(p.columns)} onChange={v => update({ columns: Number(v) as 2|3|4 })} options={[{ label: '2', value: '2' }, { label: '3', value: '3' }, { label: '4', value: '4' }]} />
+        <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
+        <ToggleSwitch label="Mostrar Divisor" value={p.showDivider} onChange={v => update({ showDivider: v })} />
+        {p.showDivider && <ColorPicker label="Cor do Divisor" value={p.dividerColor} onChange={v => update({ dividerColor: v })} />}
+        <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={120} unit="px" />
+        <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={120} unit="px" />
+      </Section>
+      <Section title="Tipografia" defaultOpen={false}>
+        <FontSelector label="Fonte do Valor" value={p.valueFontFamily} onChange={v => update({ valueFontFamily: v })} />
+        <SliderInput label="Tamanho do Valor" value={p.valueFontSize} onChange={v => update({ valueFontSize: v })} min={20} max={72} unit="px" />
+        <SelectInput label="Peso do Valor" value={p.valueFontWeight ?? '800'} onChange={v => update({ valueFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <ColorPicker label="Cor do Valor" value={p.valueColor} onChange={v => update({ valueColor: v })} />
+        <FontSelector label="Fonte do Label" value={p.labelFontFamily} onChange={v => update({ labelFontFamily: v })} />
+        <SliderInput label="Tamanho do Label" value={p.labelFontSize} onChange={v => update({ labelFontSize: v })} min={10} max={20} unit="px" />
+        <ColorPicker label="Cor do Label" value={p.labelColor} onChange={v => update({ labelColor: v })} />
+        <SliderInput label="Tamanho do Ícone" value={p.iconSize ?? 28} onChange={v => update({ iconSize: v })} min={16} max={56} unit="px" />
+      </Section>
+      <Section title="Métricas">
+        <ListEditor<StatItem>
+          label="Métricas"
+          items={p.items}
+          onChange={items => update({ items })}
+          defaultItem={defaultStat}
+          renderItem={(stat, onChange) => (
+            <>
+              <TextInput label="Valor (ex: 4.9★, 500+)" value={stat.value} onChange={v => onChange({ ...stat, value: v })} />
+              <TextInput label="Label" value={stat.label} onChange={v => onChange({ ...stat, label: v })} />
+              <ImageInput label="Ícone (imagem ou emoji, opcional)" value={stat.icon} onChange={v => onChange({ ...stat, icon: v })} assetType="icons" />
+            </>
+          )}
+        />
+      </Section>
+    </>
+  )
+}
+
+function TrustBadgesControls({ props: p, update }: { props: TrustBadgesProps, update: (p: Partial<TrustBadgesProps>) => void }) {
+  const defaultBadge: Omit<TrustBadgeItem, 'id'> = { icon: '✅', title: 'Selo', subtitle: '' }
+  return (
+    <>
+      <Section title="Layout">
+        <SelectInput label="Colunas" value={String(p.columns)} onChange={v => update({ columns: Number(v) as 2|3|4|5 })} options={[{ label: '2', value: '2' }, { label: '3', value: '3' }, { label: '4', value: '4' }, { label: '5', value: '5' }]} />
+        <SelectInput label="Alinhamento" value={p.alignment} onChange={v => update({ alignment: v as 'left' | 'center' | 'right' })} options={ALIGNMENT_OPTIONS} />
+        <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
+        <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={120} unit="px" />
+        <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={120} unit="px" />
+      </Section>
+      <Section title="Tipografia" defaultOpen={false}>
+        <SliderInput label="Tamanho do Ícone" value={p.iconSize ?? 32} onChange={v => update({ iconSize: v })} min={16} max={64} unit="px" />
+        <ColorPicker label="Cor do Ícone (texto)" value={p.iconColor} onChange={v => update({ iconColor: v })} />
+        <FontSelector label="Fonte do Título" value={p.titleFontFamily} onChange={v => update({ titleFontFamily: v })} />
+        <SliderInput label="Tamanho do Título" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={10} max={20} unit="px" />
+        <ColorPicker label="Cor do Título" value={p.titleColor} onChange={v => update({ titleColor: v })} />
+        <FontSelector label="Fonte do Subtítulo" value={p.subtitleFontFamily} onChange={v => update({ subtitleFontFamily: v })} />
+        <SliderInput label="Tamanho do Subtítulo" value={p.subtitleFontSize} onChange={v => update({ subtitleFontSize: v })} min={9} max={16} unit="px" />
+        <ColorPicker label="Cor do Subtítulo" value={p.subtitleColor} onChange={v => update({ subtitleColor: v })} />
+      </Section>
+      <Section title="Selos">
+        <ListEditor<TrustBadgeItem>
+          label="Selos"
+          items={p.items}
+          onChange={items => update({ items })}
+          defaultItem={defaultBadge}
+          renderItem={(badge, onChange) => (
+            <>
+              <ImageInput label="Ícone (emoji, URL ou biblioteca)" value={badge.icon} onChange={v => onChange({ ...badge, icon: v })} assetType="icons" />
+              <TextInput label="Título" value={badge.title} onChange={v => onChange({ ...badge, title: v })} />
+              <TextInput label="Subtítulo" value={badge.subtitle} onChange={v => onChange({ ...badge, subtitle: v })} placeholder="Opcional" />
+            </>
+          )}
+        />
+      </Section>
+    </>
+  )
+}
+
+function TwoColumnControls({ props: p, update }: { props: TwoColumnProps, update: (p: Partial<TwoColumnProps>) => void }) {
+  return (
+    <>
+      <Section title="Layout">
+        <SelectInput label="Posição do Texto" value={p.layout ?? 'text-left'} onChange={v => update({ layout: v as TwoColumnProps['layout'] })} options={[{ label: 'Texto à Esquerda', value: 'text-left' }, { label: 'Texto à Direita', value: 'text-right' }]} />
+        <SelectInput label="Alinhamento Vertical" value={p.verticalAlign ?? 'middle'} onChange={v => update({ verticalAlign: v as TwoColumnProps['verticalAlign'] })} options={VALIGN_OPTIONS} />
+        <ColorPicker label="Fundo" value={p.backgroundColor} onChange={v => update({ backgroundColor: v })} />
+        <SliderInput label="Espaço Superior" value={p.paddingTop} onChange={v => update({ paddingTop: v })} min={0} max={120} unit="px" />
+        <SliderInput label="Espaço Inferior" value={p.paddingBottom} onChange={v => update({ paddingBottom: v })} min={0} max={120} unit="px" />
+      </Section>
+      <Section title="Imagem" defaultOpen={false}>
+        <ImageInput label="Imagem" value={p.image} onChange={v => update({ image: v })} assetType="images" />
+        <TextInput label="Texto Alt" value={p.imageAlt} onChange={v => update({ imageAlt: v })} />
+        <SliderInput label="Largura da Imagem" value={p.imageWidth ?? 260} onChange={v => update({ imageWidth: v })} min={100} max={400} unit="px" />
+        <SliderInput label="Arredondamento" value={p.imageBorderRadius ?? 8} onChange={v => update({ imageBorderRadius: v })} min={0} max={40} unit="px" />
+      </Section>
+      <Section title="Conteúdo">
+        <TextInput label="Badge" value={p.badge} onChange={v => update({ badge: v })} placeholder="Opcional" />
+        {p.badge && (
+          <>
+            <ColorPicker label="Fundo do Badge" value={p.badgeColor} onChange={v => update({ badgeColor: v })} />
+            <ColorPicker label="Texto do Badge" value={p.badgeTextColor} onChange={v => update({ badgeTextColor: v })} />
+          </>
+        )}
+        <TextArea label="Título (Enter = quebra de linha)" value={p.title} onChange={v => update({ title: v })} rows={2} />
+        <FontSelector label="Fonte do Título" value={p.titleFontFamily} onChange={v => update({ titleFontFamily: v })} />
+        <SliderInput label="Tamanho do Título" value={p.titleFontSize} onChange={v => update({ titleFontSize: v })} min={16} max={60} unit="px" />
+        <SelectInput label="Peso do Título" value={p.titleFontWeight ?? '700'} onChange={v => update({ titleFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <ColorPicker label="Cor do Título" value={p.titleColor} onChange={v => update({ titleColor: v })} />
+        <SliderInput label="Entrelinha Título" value={p.titleLineHeight ?? 1.2} onChange={v => update({ titleLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Título" value={p.titleLetterSpacing ?? 0} onChange={v => update({ titleLetterSpacing: v })} min={0} max={12} unit="px" />
+        <TextArea label="Corpo (Enter = quebra de linha)" value={p.bodyText} onChange={v => update({ bodyText: v })} rows={4} />
+        <FontSelector label="Fonte do Corpo" value={p.bodyFontFamily} onChange={v => update({ bodyFontFamily: v })} />
+        <SliderInput label="Tamanho do Corpo" value={p.bodyFontSize ?? 15} onChange={v => update({ bodyFontSize: v })} min={11} max={24} unit="px" />
+        <ColorPicker label="Cor do Corpo" value={p.bodyColor} onChange={v => update({ bodyColor: v })} />
+        <SliderInput label="Entrelinha Corpo" value={p.bodyLineHeight ?? 1.7} onChange={v => update({ bodyLineHeight: v })} min={0.8} max={3} step={0.05} unit="x" />
+        <SliderInput label="Espaç. Letras Corpo" value={p.bodyLetterSpacing ?? 0} onChange={v => update({ bodyLetterSpacing: v })} min={0} max={8} unit="px" />
+      </Section>
+      <Section title="Botão CTA" defaultOpen={false}>
+        <TextInput label="Texto do Botão" value={p.ctaText} onChange={v => update({ ctaText: v })} placeholder="Deixe vazio para ocultar" />
+        <TextInput label="URL do Botão" value={p.ctaUrl} onChange={v => update({ ctaUrl: v })} placeholder="https://" />
+        <ColorPicker label="Fundo" value={p.ctaBackgroundColor} onChange={v => update({ ctaBackgroundColor: v })} />
+        <ColorPicker label="Cor do Texto" value={p.ctaTextColor} onChange={v => update({ ctaTextColor: v })} />
+        <SliderInput label="Tamanho da Fonte" value={p.ctaFontSize ?? 15} onChange={v => update({ ctaFontSize: v })} min={11} max={28} unit="px" />
+        <SelectInput label="Peso da Fonte" value={p.ctaFontWeight ?? '700'} onChange={v => update({ ctaFontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
+        <SliderInput label="Padding Vertical" value={p.ctaPaddingV ?? 13} onChange={v => update({ ctaPaddingV: v })} min={6} max={32} unit="px" />
+        <SliderInput label="Padding Horizontal" value={p.ctaPaddingH ?? 28} onChange={v => update({ ctaPaddingH: v })} min={12} max={80} unit="px" />
+        <SliderInput label="Arredondamento" value={p.ctaBorderRadius ?? 6} onChange={v => update({ ctaBorderRadius: v })} min={0} max={40} unit="px" />
       </Section>
     </>
   )
@@ -599,6 +854,10 @@ export function BlockControls() {
         {block.type === 'pricing' && <PricingControls props={p as unknown as PricingProps} update={update as (p: Partial<PricingProps>) => void} />}
         {block.type === 'faq' && <FaqControls props={p as unknown as FaqProps} update={update as (p: Partial<FaqProps>) => void} />}
         {block.type === 'socialProof' && <SocialProofControls props={p as unknown as SocialProofProps} update={update as (p: Partial<SocialProofProps>) => void} />}
+        {block.type === 'steps' && <StepsControls props={p as unknown as StepsProps} update={update as (p: Partial<StepsProps>) => void} />}
+        {block.type === 'stats' && <StatsControls props={p as unknown as StatsProps} update={update as (p: Partial<StatsProps>) => void} />}
+        {block.type === 'trustBadges' && <TrustBadgesControls props={p as unknown as TrustBadgesProps} update={update as (p: Partial<TrustBadgesProps>) => void} />}
+        {block.type === 'twoColumn' && <TwoColumnControls props={p as unknown as TwoColumnProps} update={update as (p: Partial<TwoColumnProps>) => void} />}
         {block.type === 'footer' && <FooterControls props={p as unknown as FooterProps} update={update as (p: Partial<FooterProps>) => void} />}
       </div>
     </div>

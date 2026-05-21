@@ -3,9 +3,9 @@ import { BLOCK_LABELS, BLOCK_ICONS } from '../../blocks/index'
 import type { BlockType } from '../../blocks/types'
 
 const BLOCK_TYPES: BlockType[] = [
-  'announcement', 'hero', 'sectionHeader', 'cardGrid', 'ctaBanner',
-  'featureList', 'testimonial', 'logoBar', 'comparisonTable', 'pricing',
-  'faq', 'socialProof', 'footer',
+  'announcement', 'hero', 'sectionHeader', 'twoColumn', 'cardGrid', 'ctaBanner',
+  'featureList', 'steps', 'stats', 'trustBadges', 'testimonial', 'logoBar',
+  'comparisonTable', 'pricing', 'faq', 'socialProof', 'footer',
 ]
 
 export function BlockLibrary() {

@@ -12,6 +12,10 @@ import { ComparisonTableBlock } from '../../blocks/comparisonTable/ComparisonTab
 import { PricingBlock } from '../../blocks/pricing/PricingBlock'
 import { FaqBlock } from '../../blocks/faq/FaqBlock'
 import { SocialProofBlock } from '../../blocks/socialProof/SocialProofBlock'
+import { StepsBlock } from '../../blocks/steps/StepsBlock'
+import { StatsBlock } from '../../blocks/stats/StatsBlock'
+import { TrustBadgesBlock } from '../../blocks/trustBadges/TrustBadgesBlock'
+import { TwoColumnBlock } from '../../blocks/twoColumn/TwoColumnBlock'
 import { FooterBlock } from '../../blocks/footer/FooterBlock'
 import { useEditorStore } from '../../store/editorStore'
 
@@ -30,6 +34,10 @@ function renderBlock(block: Block) {
     case 'pricing': return <PricingBlock props={p} />
     case 'faq': return <FaqBlock props={p} />
     case 'socialProof': return <SocialProofBlock props={p} />
+    case 'steps': return <StepsBlock props={p} />
+    case 'stats': return <StatsBlock props={p} />
+    case 'trustBadges': return <TrustBadgesBlock props={p} />
+    case 'twoColumn': return <TwoColumnBlock props={p} />
     case 'footer': return <FooterBlock props={p} />
     default: return <div className="p-4 text-gray-500">Bloco desconhecido</div>
   }

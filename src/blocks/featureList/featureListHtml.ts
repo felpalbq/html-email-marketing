@@ -1,7 +1,13 @@
 import type { FeatureListProps, FeatureItem } from '../types'
 import { fontStack } from '../../utils/fonts'
+import { nl2br } from '../../utils/nl2br'
 
 function featureCell(f: FeatureItem, p: FeatureListProps, width: number): string {
+  const titleLineHeight = p.titleLineHeight ?? 1.3
+  const titleLetterSpacing = p.titleLetterSpacing ?? 0
+  const descLineHeight = p.descriptionLineHeight ?? 1.55
+  const descLetterSpacing = p.descriptionLetterSpacing ?? 0
+
   const icon = f.icon.startsWith('http') || f.icon.startsWith('/')
     ? `<img src="${f.icon}" alt="" width="${p.iconSize}" height="${p.iconSize}" style="display:block;" border="0">`
     : `<span style="font-size:${p.iconSize}px; line-height:1;">${f.icon}</span>`
@@ -11,8 +17,8 @@ function featureCell(f: FeatureItem, p: FeatureListProps, width: number): string
       <tr>
         <td valign="top" style="padding-right:14px;">${icon}</td>
         <td valign="top">
-          <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor}; margin-bottom:6px;">${f.title}</div>
-          <div style="font-family:${fontStack(p.descriptionFontFamily)}; font-size:${p.descriptionFontSize}px; color:${p.descriptionColor}; line-height:1.55;">${f.description}</div>
+          <div style="font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:700; color:${p.titleColor}; margin-bottom:6px; line-height:${titleLineHeight}; mso-line-height-rule:exactly;${titleLetterSpacing > 0 ? ` letter-spacing:${titleLetterSpacing}px;` : ''}">${f.title}</div>
+          <div style="font-family:${fontStack(p.descriptionFontFamily)}; font-size:${p.descriptionFontSize}px; color:${p.descriptionColor}; line-height:${descLineHeight}; mso-line-height-rule:exactly;${descLetterSpacing > 0 ? ` letter-spacing:${descLetterSpacing}px;` : ''}">${nl2br(f.description)}</div>
         </td>
       </tr>
     </table>

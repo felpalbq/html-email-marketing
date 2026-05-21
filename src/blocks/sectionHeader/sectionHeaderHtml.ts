@@ -1,10 +1,16 @@
 import type { SectionHeaderProps } from '../types'
 import { fontStack } from '../../utils/fonts'
+import { nl2br } from '../../utils/nl2br'
 
 export function sectionHeaderHtml(p: SectionHeaderProps): string {
+  const titleLineHeight = p.titleLineHeight ?? 1.2
+  const titleLetterSpacing = p.titleLetterSpacing ?? 0
+  const subtitleLineHeight = p.subtitleLineHeight ?? 1.4
+  const subtitleLetterSpacing = p.subtitleLetterSpacing ?? 0
+
   const subtitle = p.subtitle
     ? `<tr><td align="${p.alignment}" style="padding-bottom:8px;">
-        <p style="margin:0; font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; line-height:1.4;">${p.subtitle}</p>
+        <p style="margin:0; font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; line-height:${subtitleLineHeight};${subtitleLetterSpacing > 0 ? ` letter-spacing:${subtitleLetterSpacing}px;` : ''} mso-line-height-rule:exactly;">${nl2br(p.subtitle)}</p>
        </td></tr>`
     : ''
 
@@ -15,7 +21,7 @@ export function sectionHeaderHtml(p: SectionHeaderProps): string {
       ${subtitle}
       <tr>
         <td align="${p.alignment}">
-          <h2 style="margin:0; font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:${p.titleFontWeight}; color:${p.titleColor}; line-height:1.2;">${p.title}</h2>
+          <h2 style="margin:0; font-family:${fontStack(p.titleFontFamily)}; font-size:${p.titleFontSize}px; font-weight:${p.titleFontWeight}; color:${p.titleColor}; line-height:${titleLineHeight}; mso-line-height-rule:exactly;${titleLetterSpacing > 0 ? ` letter-spacing:${titleLetterSpacing}px;` : ''}">${nl2br(p.title)}</h2>
         </td>
       </tr>
     </table>

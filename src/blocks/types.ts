@@ -11,6 +11,10 @@ export type BlockType =
   | 'pricing'
   | 'faq'
   | 'socialProof'
+  | 'steps'
+  | 'stats'
+  | 'trustBadges'
+  | 'twoColumn'
   | 'footer'
 
 export interface Block {
@@ -41,8 +45,11 @@ export interface EmailDocument {
 export interface HeroProps {
   backgroundImage: string
   backgroundImageAlt: string
+  backgroundPosition: string
   overlayColor: string
   overlayOpacity: number
+  overlayDirection: 'full' | 'left' | 'right'
+  overlayWidth: number
   badge: string
   badgeColor: string
   headline: string
@@ -50,15 +57,24 @@ export interface HeroProps {
   headlineFontSize: number
   headlineFontWeight: string
   headlineColor: string
+  headlineLineHeight: number
+  headlineLetterSpacing: number
   subtitle: string
   subtitleFontFamily: string
   subtitleFontSize: number
   subtitleColor: string
+  subtitleLineHeight: number
+  subtitleLetterSpacing: number
   ctaText: string
   ctaUrl: string
   ctaBackgroundColor: string
   ctaTextColor: string
   ctaBorderRadius: number
+  ctaFontSize: number
+  ctaFontWeight: string
+  ctaPaddingV: number
+  ctaPaddingH: number
+  ctaAlignment: 'left' | 'center' | 'right'
   contentAlignment: 'left' | 'center' | 'right'
   paddingTop: number
   paddingBottom: number
@@ -72,6 +88,8 @@ export interface AnnouncementProps {
   fontFamily: string
   fontSize: number
   fontWeight: string
+  lineHeight: number
+  letterSpacing: number
   paddingTop: number
   paddingBottom: number
   alignment: 'left' | 'center' | 'right'
@@ -85,10 +103,14 @@ export interface SectionHeaderProps {
   titleFontSize: number
   titleFontWeight: string
   titleColor: string
+  titleLineHeight: number
+  titleLetterSpacing: number
   subtitle: string
   subtitleFontFamily: string
   subtitleFontSize: number
   subtitleColor: string
+  subtitleLineHeight: number
+  subtitleLetterSpacing: number
   alignment: 'left' | 'center' | 'right'
   backgroundColor: string
   paddingTop: number
@@ -99,6 +121,7 @@ export interface CardItem {
   id: string
   image: string
   imageAlt: string
+  imageHeight: number
   badge: string
   badgeColor: string
   title: string
@@ -121,9 +144,13 @@ export interface CardGridProps {
   titleFontFamily: string
   titleFontSize: number
   titleColor: string
+  titleLineHeight: number
+  titleLetterSpacing: number
   descriptionFontFamily: string
   descriptionFontSize: number
   descriptionColor: string
+  descriptionLineHeight: number
+  descriptionLetterSpacing: number
 }
 
 export interface TestimonialItem {
@@ -148,8 +175,12 @@ export interface TestimonialProps {
   paddingBottom: number
   testimonials: TestimonialItem[]
   nameFontFamily: string
+  nameFontSize: number
+  nameLineHeight: number
   nameColor: string
   quoteFontFamily: string
+  quoteFontSize: number
+  quoteLineHeight: number
   quoteColor: string
 }
 
@@ -188,9 +219,13 @@ export interface FeatureListProps {
   titleFontFamily: string
   titleFontSize: number
   titleColor: string
+  titleLineHeight: number
+  titleLetterSpacing: number
   descriptionFontFamily: string
   descriptionFontSize: number
   descriptionColor: string
+  descriptionLineHeight: number
+  descriptionLetterSpacing: number
   iconSize: number
 }
 
@@ -199,6 +234,8 @@ export interface CtaBannerProps {
   backgroundColor: string
   image: string
   imageAlt: string
+  imageWidth: number
+  imageAlignment: 'left' | 'center' | 'right'
   badge: string
   badgeColor: string
   badgeTextColor: string
@@ -206,14 +243,22 @@ export interface CtaBannerProps {
   headlineFontFamily: string
   headlineFontSize: number
   headlineColor: string
+  headlineLineHeight: number
+  headlineLetterSpacing: number
   bodyText: string
   bodyFontFamily: string
   bodyColor: string
+  bodyLineHeight: number
+  bodyFontSize: number
   ctaText: string
   ctaUrl: string
   ctaBackgroundColor: string
   ctaTextColor: string
   ctaBorderRadius: number
+  ctaFontSize: number
+  ctaFontWeight: string
+  ctaPaddingV: number
+  ctaPaddingH: number
   paddingTop: number
   paddingBottom: number
 }
@@ -331,6 +376,8 @@ export interface SocialLink {
   id: string
   platform: 'instagram' | 'facebook' | 'twitter' | 'tiktok' | 'youtube' | 'linkedin'
   url: string
+  icon: string
+  iconSize: number
 }
 
 export interface FooterProps {
@@ -348,6 +395,128 @@ export interface FooterProps {
   linkColor: string
   fontFamily: string
   fontSize: number
+  paddingTop: number
+  paddingBottom: number
+}
+
+// --- New blocks ---
+
+export interface StepItem {
+  id: string
+  icon: string
+  title: string
+  description: string
+}
+
+export interface StepsProps {
+  layout: 'horizontal' | 'vertical'
+  backgroundColor: string
+  accentColor: string
+  sectionTitle: string
+  sectionTitleFontFamily: string
+  sectionTitleFontSize: number
+  sectionTitleColor: string
+  showSectionTitle: boolean
+  steps: StepItem[]
+  numberBackgroundColor: string
+  numberColor: string
+  stepTitleFontFamily: string
+  stepTitleFontSize: number
+  stepTitleColor: string
+  stepTitleLineHeight: number
+  descriptionFontFamily: string
+  descriptionFontSize: number
+  descriptionColor: string
+  descriptionLineHeight: number
+  showConnector: boolean
+  connectorColor: string
+  paddingTop: number
+  paddingBottom: number
+}
+
+export interface StatItem {
+  id: string
+  value: string
+  label: string
+  icon: string
+}
+
+export interface StatsProps {
+  backgroundColor: string
+  items: StatItem[]
+  columns: 2 | 3 | 4
+  valueFontFamily: string
+  valueFontSize: number
+  valueColor: string
+  valueFontWeight: string
+  labelFontFamily: string
+  labelFontSize: number
+  labelColor: string
+  iconSize: number
+  accentColor: string
+  showDivider: boolean
+  dividerColor: string
+  paddingTop: number
+  paddingBottom: number
+}
+
+export interface TrustBadgeItem {
+  id: string
+  icon: string
+  title: string
+  subtitle: string
+}
+
+export interface TrustBadgesProps {
+  backgroundColor: string
+  items: TrustBadgeItem[]
+  columns: 2 | 3 | 4 | 5
+  iconSize: number
+  iconColor: string
+  titleFontFamily: string
+  titleFontSize: number
+  titleColor: string
+  subtitleFontFamily: string
+  subtitleFontSize: number
+  subtitleColor: string
+  alignment: 'left' | 'center' | 'right'
+  paddingTop: number
+  paddingBottom: number
+}
+
+export interface TwoColumnProps {
+  layout: 'text-left' | 'text-right'
+  backgroundColor: string
+  image: string
+  imageAlt: string
+  imageWidth: number
+  imageBorderRadius: number
+  badge: string
+  badgeColor: string
+  badgeTextColor: string
+  title: string
+  titleFontFamily: string
+  titleFontSize: number
+  titleFontWeight: string
+  titleColor: string
+  titleLineHeight: number
+  titleLetterSpacing: number
+  bodyText: string
+  bodyFontFamily: string
+  bodyFontSize: number
+  bodyColor: string
+  bodyLineHeight: number
+  bodyLetterSpacing: number
+  ctaText: string
+  ctaUrl: string
+  ctaBackgroundColor: string
+  ctaTextColor: string
+  ctaBorderRadius: number
+  ctaFontSize: number
+  ctaFontWeight: string
+  ctaPaddingV: number
+  ctaPaddingH: number
+  verticalAlign: 'top' | 'middle' | 'bottom'
   paddingTop: number
   paddingBottom: number
 }

@@ -1,36 +1,27 @@
 import type { HeroProps } from '../types'
 import { fontStack } from '../../utils/fonts'
 import { hexToRgba } from '../../utils/colorUtils'
+import { nl2br } from '../../utils/nl2br'
 
 export function heroHtml(p: HeroProps): string {
   const align = p.contentAlignment
-  const overlayBg = p.overlayOpacity > 0 ? hexToRgba(p.overlayColor, p.overlayOpacity / 100) : 'transparent'
+  const direction = p.overlayDirection ?? 'full'
+  const overlayBg = p.overlayOpacity > 0 ? hexToRgba(p.overlayColor, p.overlayOpacity / 100) : 'rgba(0,0,0,0)'
   const hasImage = !!p.backgroundImage
+  const bgPosition = p.backgroundPosition ?? 'center center'
   const bgStyle = hasImage
-    ? `background-image: url('${p.backgroundImage}'); background-size: cover; background-position: center; background-color: #1a1a2e;`
+    ? `background-image: url('${p.backgroundImage}'); background-size: cover; background-position: ${bgPosition}; background-color: #1a1a2e;`
     : 'background-color: #1a1a2e;'
 
-  const badge = p.badge
-    ? `<tr><td align="${align}" style="padding-bottom:16px;">
-        <span style="display:inline-block; background-color:${p.badgeColor}; color:#ffffff; font-family:${fontStack(p.headlineFontFamily)}; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px;">${p.badge}</span>
-       </td></tr>`
-    : ''
-
-  const headline = `<tr><td align="${align}" style="padding-bottom:16px;">
-    <h1 class="mobile-font-lg" style="margin:0; font-family:${fontStack(p.headlineFontFamily)}; font-size:${p.headlineFontSize}px; font-weight:${p.headlineFontWeight}; color:${p.headlineColor}; line-height:1.15;">${p.headline}</h1>
-  </td></tr>`
-
-  const subtitle = p.subtitle
-    ? `<tr><td align="${align}" style="padding-bottom:28px;">
-        <p style="margin:0; font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; line-height:1.6;">${p.subtitle}</p>
-       </td></tr>`
-    : ''
-
-  const cta = p.ctaText
-    ? `<tr><td align="${align}">
-        <a href="${p.ctaUrl}" style="display:inline-block; font-family:${fontStack(p.headlineFontFamily)}; font-size:16px; font-weight:700; color:${p.ctaTextColor}; background-color:${p.ctaBackgroundColor}; padding:14px 36px; border-radius:${p.ctaBorderRadius}px; text-decoration:none;">${p.ctaText}</a>
-       </td></tr>`
-    : ''
+  const lineHeight = p.headlineLineHeight ?? 1.15
+  const letterSpacing = p.headlineLetterSpacing ?? 0
+  const subtitleLineHeight = p.subtitleLineHeight ?? 1.6
+  const subtitleLetterSpacing = p.subtitleLetterSpacing ?? 0
+  const ctaFontSize = p.ctaFontSize ?? 16
+  const ctaFontWeight = p.ctaFontWeight ?? '700'
+  const ctaPaddingV = p.ctaPaddingV ?? 14
+  const ctaPaddingH = p.ctaPaddingH ?? 36
+  const ctaAlign = p.ctaAlignment ?? align
 
   const vmlStart = hasImage
     ? `<!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;"><v:fill type="frame" src="${p.backgroundImage}" color="#1a1a2e"/><v:textbox inset="0,0,0,0"><div><![endif]-->`
@@ -39,6 +30,67 @@ export function heroHtml(p: HeroProps): string {
     ? `<!--[if gte mso 9]></div></v:textbox></v:rect><![endif]-->`
     : ''
 
+  const badge = p.badge
+    ? `<tr><td align="${align}" style="padding-bottom:16px;">
+        <span style="display:inline-block; background-color:${p.badgeColor}; color:#ffffff; font-family:${fontStack(p.headlineFontFamily)}; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; mso-padding-alt:5px 14px;">${p.badge}</span>
+       </td></tr>`
+    : ''
+
+  const headline = `<tr><td align="${align}" style="padding-bottom:16px;">
+    <h1 class="mobile-font-lg" style="margin:0; font-family:${fontStack(p.headlineFontFamily)}; font-size:${p.headlineFontSize}px; font-weight:${p.headlineFontWeight}; color:${p.headlineColor}; line-height:${lineHeight};${letterSpacing > 0 ? ` letter-spacing:${letterSpacing}px;` : ''} mso-line-height-rule:exactly;">${nl2br(p.headline)}</h1>
+  </td></tr>`
+
+  const subtitle = p.subtitle
+    ? `<tr><td align="${align}" style="padding-bottom:28px;">
+        <p style="margin:0; font-family:${fontStack(p.subtitleFontFamily)}; font-size:${p.subtitleFontSize}px; color:${p.subtitleColor}; line-height:${subtitleLineHeight};${subtitleLetterSpacing > 0 ? ` letter-spacing:${subtitleLetterSpacing}px;` : ''} mso-line-height-rule:exactly;">${nl2br(p.subtitle)}</p>
+       </td></tr>`
+    : ''
+
+  const cta = p.ctaText
+    ? `<tr><td align="${ctaAlign}">
+        <a href="${p.ctaUrl}" style="display:inline-block; font-family:${fontStack(p.headlineFontFamily)}; font-size:${ctaFontSize}px; font-weight:${ctaFontWeight}; color:${p.ctaTextColor}; background-color:${p.ctaBackgroundColor}; padding:${ctaPaddingV}px ${ctaPaddingH}px; border-radius:${p.ctaBorderRadius}px; text-decoration:none; mso-padding-alt:${ctaPaddingV}px ${ctaPaddingH}px;">${p.ctaText}</a>
+       </td></tr>`
+    : ''
+
+  const content = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    ${badge}
+    ${headline}
+    ${subtitle}
+    ${cta}
+  </table>`
+
+  // Full overlay — single column, overlay on the td background
+  if (direction === 'full') {
+    return `
+<tr>
+  <td>
+    ${vmlStart}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+      style="min-height:${p.minHeight}px; ${bgStyle}">
+      <tr>
+        <td class="mobile-padding" bgcolor="#1a1a2e" style="background-color:${overlayBg}; padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
+          ${content}
+        </td>
+      </tr>
+    </table>
+    ${vmlEnd}
+  </td>
+</tr>`
+  }
+
+  // Split overlay — left or right: 2-column inner table
+  const overlayWidthPx = Math.round(560 * ((p.overlayWidth ?? 60) / 100))
+  const transparentWidthPx = 560 - overlayWidthPx
+  const [textCol, emptyCol] = direction === 'left'
+    ? [
+        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-color:${overlayBg}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px;">${content}</td>`,
+        `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
+      ]
+    : [
+        `<td class="mobile-hide" width="${transparentWidthPx}" style="background-color:rgba(0,0,0,0);"></td>`,
+        `<td class="mobile-full" width="${overlayWidthPx}" valign="top" bgcolor="${p.overlayColor}" style="background-color:${overlayBg}; padding:${p.paddingTop}px 32px ${p.paddingBottom}px;">${content}</td>`,
+      ]
+
   return `
 <tr>
   <td>
@@ -46,12 +98,12 @@ export function heroHtml(p: HeroProps): string {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
       style="min-height:${p.minHeight}px; ${bgStyle}">
       <tr>
-        <td class="mobile-padding" style="background-color:${overlayBg}; padding:${p.paddingTop}px 40px ${p.paddingBottom}px;">
+        <td style="padding:0;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            ${badge}
-            ${headline}
-            ${subtitle}
-            ${cta}
+            <tr>
+              ${textCol}
+              ${emptyCol}
+            </tr>
           </table>
         </td>
       </tr>

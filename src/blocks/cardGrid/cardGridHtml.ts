@@ -2,13 +2,17 @@ import type { CardGridProps, CardItem } from '../types'
 import { fontStack } from '../../utils/fonts'
 
 function cardHtml(card: CardItem, width: number, props: CardGridProps): string {
+  const titleLineHeight = props.titleLineHeight ?? 1.3
+  const descLineHeight = props.descriptionLineHeight ?? 1.5
+  const imgHeight = card.imageHeight ?? 180
+
   const badge = card.badge
     ? `<div style="margin-bottom:10px;"><span style="display:inline-block; background-color:${card.badgeColor}; color:#ffffff; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px; border-radius:20px;">${card.badge}</span></div>`
     : ''
 
   const img = card.image
     ? `<img class="mobile-img" src="${card.image}" alt="${card.imageAlt}" width="${width}" style="display:block; width:${width}px; height:auto; border-radius:${card.borderRadius}px ${card.borderRadius}px 0 0;" border="0">`
-    : `<div style="width:100%; height:180px; background-color:#e5e7eb; border-radius:${card.borderRadius}px ${card.borderRadius}px 0 0;"></div>`
+    : `<div style="width:100%; height:${imgHeight}px; background-color:#e5e7eb; border-radius:${card.borderRadius}px ${card.borderRadius}px 0 0;"></div>`
 
   const cta = card.ctaText
     ? `<div style="margin-top:16px;"><a href="${card.ctaUrl}" style="display:inline-block; background-color:${card.ctaBackgroundColor}; color:${card.ctaTextColor}; font-size:14px; font-weight:600; padding:10px 22px; border-radius:4px; text-decoration:none;">${card.ctaText}</a></div>`
@@ -20,8 +24,8 @@ function cardHtml(card: CardItem, width: number, props: CardGridProps): string {
       <tr><td style="padding:0;">${img}</td></tr>
       <tr><td style="padding:16px 16px 20px;">
         ${badge}
-        <div style="font-family:${fontStack(props.titleFontFamily)}; font-size:${props.titleFontSize}px; font-weight:700; color:${props.titleColor}; margin-bottom:8px;">${card.title}</div>
-        <div style="font-family:${fontStack(props.descriptionFontFamily)}; font-size:${props.descriptionFontSize}px; color:${props.descriptionColor}; line-height:1.5;">${card.description}</div>
+        <div style="font-family:${fontStack(props.titleFontFamily)}; font-size:${props.titleFontSize}px; font-weight:700; color:${props.titleColor}; margin-bottom:8px; line-height:${titleLineHeight}; mso-line-height-rule:exactly;">${card.title}</div>
+        <div style="font-family:${fontStack(props.descriptionFontFamily)}; font-size:${props.descriptionFontSize}px; color:${props.descriptionColor}; line-height:${descLineHeight}; mso-line-height-rule:exactly;">${card.description}</div>
         ${cta}
       </td></tr>
     </table>
